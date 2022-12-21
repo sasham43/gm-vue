@@ -4,11 +4,10 @@ export default {
     type: String,
     position: String,
     tiles: Array,
+    speed: Number,
   },
   data() {
     return {
-      //   top: 0,
-      //   left: 0,
       tileWidth: 50,
       tileHeight: 50,
       tileMarginBase: 4,
@@ -22,9 +21,6 @@ export default {
       return this.position.split(",")[1];
     },
     currentTile() {
-      //   let xPos = this.position.split(",")[0];
-      //   let yPos = this.position.split(",")[1];
-
       return this.tiles[this.xPos][this.yPos];
     },
     tileMargin() {
@@ -37,26 +33,6 @@ export default {
       return `${(this.tileHeight + this.tileMargin) * this.yPos}px`;
     },
   },
-  //   methods: {
-  //     findPos() {
-  //       let tileWidth = 50;
-  //       let tileHeight = 50;
-  //       let tileMargin = 4 * 2;
-
-  //       let left = (tileWidth + tileMargin) * this.xPos;
-  //       let top = (tileHeight + tileMargin) * this.yPos;
-
-  //       console.log("left", left);
-  //       console.log("top", top);
-  //       this.left = left;
-  //       this.top = top;
-  //       //   this.left = (tileWidth + tileMargin) * this.xPos;
-  //       //   this.top = (tileHeight + tileMargin) * this.yPos;
-  //     },
-  //   },
-  //   created() {
-  //     this.findPos();
-  //   },
 };
 </script>
 <template>
@@ -72,5 +48,7 @@ export default {
   background-color: brown;
 
   position: absolute;
+  pointer-events: none;
+  transition: 0.2s all;
 }
 </style>
