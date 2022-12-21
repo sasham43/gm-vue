@@ -18,6 +18,14 @@ export default {
       },
       //   playerPos: "1,2",
       mode: "free",
+      enemies: [
+        {
+          x: 4,
+          y: 4,
+          speed: 1,
+          attack: "melee",
+        },
+      ],
     };
   },
   computed: {
@@ -45,13 +53,15 @@ export default {
         }
       }
       // add attacks here
+
+      this.setMode("free");
     },
     movePlayer(targetPos) {
       this.player.pos = targetPos;
 
       // let moveDelay = 200;
       // window.setTimeout(() => {
-      this.mode = "free";
+      // this.mode = "free";
       // }, moveDelay);
     },
     setMode(mode) {
@@ -83,6 +93,7 @@ export default {
       :mode="mode"
     ></TileMap>
     <Actor :position="player.pos" :speed="player.speed" :tiles="tiles"></Actor>
+    <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
   </div>
 </template>
 

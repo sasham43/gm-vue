@@ -5,6 +5,9 @@ export default {
     position: String,
     tiles: Array,
     speed: Number,
+    x: Number,
+    y: Number,
+    isEnemy: Boolean,
   },
   data() {
     return {
@@ -16,10 +19,18 @@ export default {
   },
   computed: {
     xPos() {
-      return this.position.split(",")[0];
+      if (this.position) {
+        return this.position?.split(",")[0];
+      } else {
+        return this.x;
+      }
     },
     yPos() {
-      return this.position.split(",")[1];
+      if (this.position) {
+        return this.position?.split(",")[1];
+      } else {
+        return this.y;
+      }
     },
     currentTile() {
       return this.tiles[this.xPos][this.yPos];
@@ -44,7 +55,11 @@ export default {
 };
 </script>
 <template>
-  <div :style="{ top: top, left: left }" class="actor"></div>
+  <div
+    :style="{ top: top, left: left }"
+    :class="{ enemy: this.isEnemy }"
+    class="actor"
+  ></div>
 </template>
 
 <style scoped>
@@ -52,11 +67,16 @@ export default {
   width: 25px;
   height: 25px;
   margin: 18px;
-  border: solid 1px red;
-  background-color: brown;
+  border: solid 1px aquamarine;
+  background-color: darkturquoise;
 
   position: absolute;
   pointer-events: none;
   transition: 0.2s all;
+}
+
+.enemy {
+  border: solid 1px red;
+  background-color: brown;
 }
 </style>
