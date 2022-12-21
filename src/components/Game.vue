@@ -12,38 +12,41 @@ export default {
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
       ],
-      playerPos: "1,2",
+      player: {
+        pos: "1,2",
+        speed: 1,
+      },
+      //   playerPos: "1,2",
       mode: "free",
     };
   },
   computed: {
     playerX() {
-      return this.playerPos.split(",")[0];
+      return this.player.pos.split(",")[0];
     },
     playerY() {
-      return this.playerPos.split(",")[1];
+      return this.player.pos.split(",")[1];
     },
     currentTile() {
       return this.tiles[this.playerX][this.playerY];
     },
   },
   methods: {
-    onTileSelect(tile, row, col) {
-      //   console.log("select", tile, row, col);
+    onTileSelect(tile, row, col, isNavigable) {
       let selectPos = `${col},${row}`;
 
       if (this.mode == "free") {
-        if (selectPos == this.playerPos) {
-          // console.log("select player");
+        if (selectPos == this.player.pos) {
           this.mode = "player-move";
         }
       } else if (this.mode == "player-move") {
-        // this.playerPos = selectPos;
-        this.movePlayer(selectPos);
+        if (isNavigable) {
+          this.movePlayer(selectPos);
+        }
       }
     },
     movePlayer(targetPos) {
-      this.playerPos = targetPos;
+      this.player.pos = targetPos;
       this.mode = "free";
     },
   },
@@ -56,8 +59,12 @@ export default {
     {{ mode }}
   </div>
   <div class="tilemap">
-    <TileMap @tile-select="onTileSelect" :tiles="tiles"></TileMap>
-    <Actor :position="playerPos" :speed="2" :tiles="tiles"></Actor>
+    <TileMap
+      @tile-select="onTileSelect"
+      :player="player"
+      :tiles="tiles"
+    ></TileMap>
+    <Actor :position="player.pos" :speed="player.speed" :tiles="tiles"></Actor>
   </div>
 </template>
 
