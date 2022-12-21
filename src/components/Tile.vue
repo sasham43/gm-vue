@@ -7,6 +7,6 @@
   width: 50px;
   height: 50px;
   background-color: green;
-  margin: 5px;
+  margin: 4px;
 }
 </style>

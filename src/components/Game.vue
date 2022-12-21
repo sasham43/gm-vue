@@ -1,5 +1,6 @@
 <script>
 import TileMap from "./TileMap.vue";
+import Actor from "./Actor.vue";
 
 export default {
   data() {
@@ -13,10 +14,19 @@ export default {
       ],
     };
   },
-  components: { TileMap },
+  components: { TileMap, Actor },
 };
 </script>
 
 <template>
-  <TileMap :tiles="tiles"></TileMap>
+  <div class="tilemap">
+    <TileMap :tiles="tiles"></TileMap>
+    <Actor position="0,0" :tiles="tiles"></Actor>
+  </div>
 </template>
+
+<style scoped>
+.tilemap {
+  position: relative;
+}
+</style>
