@@ -42,12 +42,20 @@ export default {
     isHighlightedAttack() {
       if (this.mode != "attack") return false;
       return isHighlightedAttack(
-        "melee",
+        "ranged",
         this.col,
         this.row,
         this.playerX,
-        this.playerY
+        this.playerY,
+        2
       );
+      // return isHighlightedAttack(
+      //   "melee",
+      //   this.col,
+      //   this.row,
+      //   this.playerX,
+      //   this.playerY
+      // );
     },
   },
 };

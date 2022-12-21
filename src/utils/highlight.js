@@ -22,7 +22,14 @@ export function isHighlightedMove(tile, row, col, playerX, playerY, speed) {
   return isWithinSpeed;
 }
 
-export function isHighlightedAttack(type, tileX, tileY, originX, originY) {
+export function isHighlightedAttack(
+  type,
+  tileX,
+  tileY,
+  originX,
+  originY,
+  range
+) {
   if (type === "melee") {
     let xClose, yClose;
 
@@ -45,5 +52,28 @@ export function isHighlightedAttack(type, tileX, tileY, originX, originY) {
       return false;
     }
   } else if (type === "ranged") {
+    return isHighlightedTile(tileX, tileY, originX, originY, range);
   }
+}
+
+function isHighlightedTile(tileX, tileY, originX, originY, range) {
+  let xClose, yClose;
+  let isWithinRange = false;
+
+  if (tileY > originY) {
+    yClose = Math.abs(tileY - originY);
+  } else {
+    yClose = Math.abs(originY - tileY);
+  }
+  if (tileX > originX) {
+    xClose = Math.abs(tileX - originX);
+  } else {
+    xClose = Math.abs(originX - tileX);
+  }
+
+  if (xClose <= range && yClose <= range) {
+    isWithinRange = true;
+  }
+
+  return isWithinRange;
 }
