@@ -1,6 +1,7 @@
 <script>
 import TileMap from "./TileMap.vue";
 import Actor from "./Actor.vue";
+import { isHighlightedAttack } from "../utils/highlight";
 
 export default {
   data() {
@@ -15,6 +16,8 @@ export default {
       player: {
         pos: "1,2",
         speed: 1,
+        meleePower: 2,
+        rangedPower: 1,
       },
       //   playerPos: "1,2",
       mode: "free",
@@ -24,6 +27,7 @@ export default {
           y: 4,
           speed: 1,
           attack: "melee",
+          health: 6,
         },
       ],
     };
@@ -51,10 +55,30 @@ export default {
         if (isNavigable) {
           this.movePlayer(selectPos);
         }
+      } else if (this.mode == "melee") {
+        let isAttackable = isHighlightedAttack(
+          "melee",
+          col,
+          row,
+          this.playerX,
+          this.playerY
+        );
+
+        let isEnemyPos = this.findEnemyPos(selectPos);
+
+        if (isAttackable && isEnemyPos) {
+          console.log("attack");
+          enemy.health -= this.player.meleePower;
+        }
       }
       // add attacks here
 
       this.setMode("free");
+    },
+    findEnemyPos(selectPos) {
+      return this.enemies.find((enemy) => {
+        return `${enemy.x},${enemy.y}` === selectPos;
+      });
     },
     movePlayer(targetPos) {
       this.player.pos = targetPos;
