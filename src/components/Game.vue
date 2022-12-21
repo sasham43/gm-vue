@@ -38,8 +38,13 @@ export default {
           this.mode = "player-move";
         }
       } else if (this.mode == "player-move") {
-        this.playerPos = selectPos;
+        // this.playerPos = selectPos;
+        this.movePlayer(selectPos);
       }
+    },
+    movePlayer(targetPos) {
+      this.playerPos = targetPos;
+      this.mode = "free";
     },
   },
   components: { TileMap, Actor },
