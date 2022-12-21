@@ -77,3 +77,23 @@ function isHighlightedTile(tileX, tileY, originX, originY, range) {
 
   return isWithinRange;
 }
+
+export function findDistance(startX, startY, targetX, targetY) {
+  let x, y;
+  if (startX > targetX) {
+    x = startX - targetX;
+  } else {
+    x = targetX - startX;
+  }
+  if (startY > targetY) {
+    y = startY - targetY;
+  } else {
+    y = targetY - startY;
+  }
+
+  return {
+    x,
+    y,
+    total: x + y,
+  };
+}

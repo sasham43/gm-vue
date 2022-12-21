@@ -1,7 +1,11 @@
 <script>
 import TileMap from "./TileMap.vue";
 import Actor from "./Actor.vue";
-import { isHighlightedAttack } from "../utils/highlight";
+import {
+  isHighlightedAttack,
+  findDistance,
+  isHighlightedMove,
+} from "../utils/highlight";
 import rollDice from "../utils/dice";
 
 export default {
@@ -18,7 +22,9 @@ export default {
       player: {
         player: true,
         name: "Hero",
-        pos: "1,2",
+        // pos: "1,2",
+        x: 1,
+        y: 2,
         speed: 1,
         meleePower: 2,
         rangedPower: 1,
@@ -47,17 +53,22 @@ export default {
           attack: "ranged",
           health: 4,
           initiative: 0,
+          range: 2,
         },
       ],
       turnOrder: [],
+      currentActorMoved: false,
+      currentActorAttacked: false,
     };
   },
   computed: {
     playerX() {
-      return this.player.pos.split(",")[0];
+      return this.player.x;
+      // return this.player?.pos.split(",")[0];
     },
     playerY() {
-      return this.player.pos.split(",")[1];
+      return this.player.y;
+      // return this.player?.pos.split(",")[1];
     },
     currentTile() {
       return this.tiles[this.playerX][this.playerY];
@@ -80,6 +91,7 @@ export default {
     },
     onTileSelect(tile, row, col, isNavigable) {
       let selectPos = `${col},${row}`;
+      console.log("select", row, col, this.mode, isNavigable);
 
       if (this.mode == "free") {
         if (selectPos == this.player.pos) {
@@ -87,7 +99,7 @@ export default {
         }
       } else if (this.mode == "player-move") {
         if (isNavigable) {
-          this.movePlayer(selectPos);
+          this.movePlayer(col, row);
         }
       } else if (this.mode == "melee") {
         let isAttackable = isHighlightedAttack(
@@ -127,8 +139,9 @@ export default {
         return `${enemy.x},${enemy.y}` === selectPos;
       });
     },
-    movePlayer(targetPos) {
-      this.player.pos = targetPos;
+    movePlayer(x, y) {
+      this.player.x = x;
+      this.player.y = y;
     },
     setMode(mode) {
       if (this.mode === mode) {
@@ -151,12 +164,138 @@ export default {
         return 0;
       });
 
-      // console.log(
-      //   "init",
-      //   initiativeRolls.map((a) => a.name)
-      // );
+      this.turnOrder = initiativeRolls; //.map((a) => a.name);
+      // this.turnOrder = initiativeRolls.map((a) => a.name);
 
-      this.turnOrder = initiativeRolls.map((a) => a.name);
+      this.watchCurrentTurn(0); // start turns
+    },
+    watchCurrentTurn(newValue, oldValue) {
+      let currentActor = this.turnOrder[newValue];
+      // let currentActor = console.log("current Actor", currentActor);
+
+      if (currentActor.player) {
+        // wait for player input
+        console.log("player turn");
+      } else {
+        // AI actions
+        console.log("enemy turn");
+        this.enemyTurn(currentActor);
+      }
+    },
+    enemyTurn(actor) {
+      // check if can attack player
+      if (actor.attack == "ranged") {
+        // let playerDistance = findDistance(
+        //   actor.x,
+        //   actor.y,
+        //   this.player.x,
+        //   this.player.y,
+        //   actor.range
+        // );
+        let isAttackable = isHighlightedAttack(
+          "ranged",
+          this.player.x,
+          this.player.y,
+          actor.x,
+          actor.y,
+          actor.range
+        );
+        console.log("is attackable", isAttackable);
+        if (!isAttackable) {
+          console.log("too far, moving");
+          if (this.currentActorMoved) {
+            this.nextTurn();
+          } else {
+            this.enemyChoice(() => {
+              this.moveTowardsPlayer(actor);
+            });
+          }
+        } else {
+          // attack
+          console.log("ranged attack");
+          this.enemyChoice(() => {
+            this.player.health -= actor.rangedPower;
+            this.nextTurn();
+          });
+        }
+
+        // console.log("player dist", playerDistance, actor.range);
+        // if (playerDistance.x > actor.range && playerDistance.y > actor.range) {
+        //   console.log("too far, moving");
+        //   if (this.currentActorMoved) {
+        //     this.nextTurn();
+        //   } else {
+        //     this.enemyChoice(() => {
+        //       this.moveTowardsPlayer(actor);
+        //     });
+        //   }
+        // } else {
+        //   // attack
+        //   console.log("ranged attack");
+        //   this.enemyChoice(() => {
+        //     this.player.health -= actor.rangedPower;
+        //   });
+        //   this.nextTurn();
+        // }
+      }
+    },
+    enemyChoice(action) {
+      let enemyDecisionSpeed = 2000;
+
+      window.setTimeout(() => {
+        console.log("choice");
+        action();
+      }, enemyDecisionSpeed);
+    },
+    moveTowardsPlayer(actor) {
+      // get tiles we can move to
+      let highlightedTiles = [];
+      this.tiles.forEach((row, x) => {
+        row.forEach((tile, y) => {
+          let canMoveTo = isHighlightedMove(
+            tile,
+            y,
+            x,
+            actor.x,
+            actor.y,
+            actor.speed
+          );
+          if (canMoveTo) {
+            highlightedTiles.push({
+              x,
+              y,
+              playerDistance: findDistance(
+                actor.x,
+                actor.y,
+                this.player.x,
+                this.player.y
+              ),
+            });
+          }
+        });
+      });
+
+      highlightedTiles.sort((a, b) => {
+        if (a.playerDistance.x > b.playerDistance.x) return 1;
+        if (a.playerDistance.y > b.playerDistance.y) return 1;
+        if (a.playerDistance.x < b.playerDistance.x) return -1;
+        if (a.playerDistance.y < b.playerDistance.y) return -1;
+        return 0;
+      });
+
+      console.log("hilgihgt", highlightedTiles);
+
+      actor.x = highlightedTiles[0].x;
+      actor.y = highlightedTiles[0].y;
+
+      this.currentActorMoved = true;
+
+      this.enemyTurn(actor);
+    },
+  },
+  watch: {
+    currentTurn(newValue, oldValue) {
+      return this.watchCurrentTurn(newValue, oldValue);
     },
   },
   components: { TileMap, Actor },
@@ -179,7 +318,12 @@ export default {
       :tiles="tiles"
       :mode="mode"
     ></TileMap>
-    <Actor :position="player.pos" :speed="player.speed" :tiles="tiles"></Actor>
+    <Actor
+      :x="player.x"
+      :y="player.y"
+      :speed="player.speed"
+      :tiles="tiles"
+    ></Actor>
     <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
   </div>
   <div>
@@ -190,9 +334,9 @@ export default {
       <div
         class="turn"
         :class="{ 'current-turn': currentTurn == turn }"
-        v-for="(name, turn) in turnOrder"
+        v-for="(actor, turn) in turnOrder"
       >
-        {{ name }}
+        {{ actor.name }}
       </div>
     </div>
   </div>

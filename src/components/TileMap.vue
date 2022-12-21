@@ -9,10 +9,12 @@ export default {
   },
   computed: {
     playerX() {
-      return this.player?.pos.split(",")[0];
+      return this.player.x;
+      // return this.player?.pos.split(",")[0];
     },
     playerY() {
-      return this.player?.pos.split(",")[1];
+      return this.player.y;
+      // return this.player?.pos.split(",")[1];
     },
     currentTile() {
       return this.tiles[this.playerX][this.playerY];
@@ -20,6 +22,8 @@ export default {
   },
   methods: {
     selectTile(tile, row, col) {
+      console.log("row", row);
+      console.log("col", col);
       let isNavigable = isHighlightedMove(
         tile,
         row,
@@ -44,8 +48,8 @@ export default {
         <Tile
           @click="selectTile(tile, rowIndex, colIndex)"
           :tile="tile"
-          :row="rowIndex"
-          :col="colIndex"
+          :y="rowIndex"
+          :x="colIndex"
           :player="player"
           :mode="mode"
         ></Tile>
