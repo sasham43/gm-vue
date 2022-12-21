@@ -7,6 +7,7 @@ import rollDice from "../utils/dice";
 export default {
   data() {
     return {
+      currentTurn: 0,
       tiles: [
         [1, 1, 1, 1, 1],
         [1, 1, 0, 1, 1],
@@ -63,6 +64,20 @@ export default {
     },
   },
   methods: {
+    nextTurn() {
+      if (this.currentTurn === this.turnOrder.length - 1) {
+        this.currentTurn = 0;
+      } else {
+        this.currentTurn += 1;
+      }
+    },
+    previousTurn() {
+      if (this.currentTurn == 0) {
+        this.currentTurn = this.turnOrder.length - 1;
+      } else {
+        this.currentTurn -= 1;
+      }
+    },
     onTileSelect(tile, row, col, isNavigable) {
       let selectPos = `${col},${row}`;
 
@@ -86,7 +101,6 @@ export default {
         let enemy = this.findEnemyPos(selectPos);
 
         if (isAttackable && enemy) {
-          // console.log("attack");
           enemy.health -= this.player.meleePower;
         }
       } else if (this.mode == "ranged") {
@@ -102,11 +116,9 @@ export default {
         let enemy = this.findEnemyPos(selectPos);
 
         if (isAttackable && enemy) {
-          // console.log("attack");
           enemy.health -= this.player.rangedPower;
         }
       }
-      // add attacks here
 
       this.setMode("free");
     },
@@ -127,29 +139,22 @@ export default {
     },
     rollInitiative() {
       let d20 = rollDice("1d20");
-
-      // console.log("init", d20);
-
-      this.player.initiative = d20.total; //rollDice("1d20").total;
-
-      // console.log("player", this.player);
+      this.player.initiative = d20.total;
 
       this.enemies = this.enemies.map((enemy) => {
         enemy.initiative = rollDice("1d20").total;
         return enemy;
       });
-      // console.log("enemies", this.enemies);
       let initiativeRolls = [this.player, ...this.enemies].sort((a, b) => {
-        // console.log("a", a.initative, b.initative);
         if (a.initiative > b.initiative) return 1;
         if (a.initiative < b.initiative) return -1;
         return 0;
       });
 
-      console.log(
-        "init",
-        initiativeRolls.map((a) => a.name)
-      );
+      // console.log(
+      //   "init",
+      //   initiativeRolls.map((a) => a.name)
+      // );
 
       this.turnOrder = initiativeRolls.map((a) => a.name);
     },
@@ -178,9 +183,15 @@ export default {
     <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
   </div>
   <div>
+    <button @click="previousTurn()">&lt; turn</button>
     <button @click="rollInitiative()">battle</button>
+    <button @click="nextTurn()">> turn</button>
     <div>
-      <div v-for="name in turnOrder">
+      <div
+        class="turn"
+        :class="{ 'current-turn': currentTurn == turn }"
+        v-for="(name, turn) in turnOrder"
+      >
         {{ name }}
       </div>
     </div>
@@ -190,5 +201,13 @@ export default {
 <style scoped>
 .tilemap {
   position: relative;
+}
+.turn {
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+}
+.current-turn {
+  border-color: blueviolet;
 }
 </style>
