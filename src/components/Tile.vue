@@ -1,5 +1,5 @@
 <script>
-import { isHighlightedTile } from "../utils/highlight";
+import { isHighlightedAttack, isHighlightedMove } from "../utils/highlight";
 
 export default {
   props: {
@@ -16,17 +16,37 @@ export default {
     playerY() {
       return this.player?.pos.split(",")[1];
     },
-    isHighlightedTile() {
+    isHighlightedMove() {
       if (this.mode != "player-move") return false;
-      console.log("player mode", this.mode);
+      // console.log("player mode", this.mode);
 
-      return isHighlightedTile(
+      return isHighlightedMove(
         this.tile,
         this.row,
         this.col,
         this.playerX,
         this.playerY,
         this.player.speed
+      );
+
+      // else if (this.mode == "attack") {
+      //   return isHighlightedAttack(
+      //     "melee",
+      //     this.col,
+      //     this.row,
+      //     this.playerX,
+      //     this.playerY
+      //   );
+      // }
+    },
+    isHighlightedAttack() {
+      if (this.mode != "attack") return false;
+      return isHighlightedAttack(
+        "melee",
+        this.col,
+        this.row,
+        this.playerX,
+        this.playerY
       );
     },
   },
@@ -39,7 +59,8 @@ export default {
     :class="{
       'empty-tile': tile === 0,
       'filled-tile': tile === 1,
-      'highlighted-tile': isHighlightedTile,
+      'highlighted-move-tile': isHighlightedMove,
+      'highlighted-attack-tile': isHighlightedAttack,
     }"
   >
     <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
@@ -57,8 +78,11 @@ export default {
 .empty-tile {
   background-color: black;
 }
-.highlighted-tile {
+.highlighted-move-tile {
   background-color: blue !important;
+}
+.highlighted-attack-tile {
+  background-color: red !important;
 }
 
 .debug {

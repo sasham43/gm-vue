@@ -53,6 +53,13 @@ export default {
       this.mode = "free";
       // }, moveDelay);
     },
+    setMode(mode) {
+      if (this.mode === mode) {
+        this.mode = "free";
+      } else {
+        this.mode = mode;
+      }
+    },
   },
   components: { TileMap, Actor },
 };
@@ -61,6 +68,10 @@ export default {
 <template>
   <div>
     {{ mode }}
+  </div>
+  <div>
+    <button @click="setMode('attack')">attack</button>
+    <button @click="setMode('player-move')">player move</button>
   </div>
   <div class="tilemap">
     <TileMap

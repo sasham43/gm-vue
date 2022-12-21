@@ -1,6 +1,6 @@
 <script>
 import Tile from "./Tile.vue";
-import { isHighlightedTile } from "../utils/highlight";
+import { isHighlightedMove } from "../utils/highlight";
 export default {
   props: {
     tiles: Array,
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     selectTile(tile, row, col) {
-      let isNavigable = isHighlightedTile(
+      let isNavigable = isHighlightedMove(
         tile,
         row,
         col,

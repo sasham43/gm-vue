@@ -1,4 +1,4 @@
-export function isHighlightedTile(tile, row, col, playerX, playerY, speed) {
+export function isHighlightedMove(tile, row, col, playerX, playerY, speed) {
   let isWithinSpeed = false;
   let xClose, yClose;
 
@@ -20,4 +20,30 @@ export function isHighlightedTile(tile, row, col, playerX, playerY, speed) {
   }
 
   return isWithinSpeed;
+}
+
+export function isHighlightedAttack(type, tileX, tileY, originX, originY) {
+  if (type === "melee") {
+    let xClose, yClose;
+
+    if (tileY > originY) {
+      yClose = Math.abs(tileY - originY);
+    } else {
+      yClose = Math.abs(originY - tileY);
+    }
+    if (tileX > originX) {
+      xClose = Math.abs(tileX - originX);
+    } else {
+      xClose = Math.abs(originX - tileX);
+    }
+
+    if (xClose == 1 && yClose == 0) {
+      return true;
+    } else if (yClose == 1 && xClose == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } else if (type === "ranged") {
+  }
 }
