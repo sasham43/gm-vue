@@ -6,11 +6,11 @@ export default {
   data() {
     return {
       tiles: [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1],
+        [1, 1, 0, 1, 1],
+        [1, 1, 0, 1, 0],
+        [0, 1, 0, 0, 0],
+        [0, 1, 1, 1, 1],
       ],
       player: {
         pos: "1,2",
@@ -47,7 +47,11 @@ export default {
     },
     movePlayer(targetPos) {
       this.player.pos = targetPos;
+
+      // let moveDelay = 200;
+      // window.setTimeout(() => {
       this.mode = "free";
+      // }, moveDelay);
     },
   },
   components: { TileMap, Actor },
@@ -63,6 +67,7 @@ export default {
       @tile-select="onTileSelect"
       :player="player"
       :tiles="tiles"
+      :mode="mode"
     ></TileMap>
     <Actor :position="player.pos" :speed="player.speed" :tiles="tiles"></Actor>
   </div>

@@ -7,6 +7,7 @@ export default {
     col: Number,
     player: Object,
     mode: String,
+    tile: Number, // for now...
   },
   computed: {
     playerX() {
@@ -16,28 +17,11 @@ export default {
       return this.player?.pos.split(",")[1];
     },
     isHighlightedTile() {
-      // let isWithinSpeed = false;
-      // if (this.mode === "player-move") {
-      //   let xClose, yClose;
+      if (this.mode != "player-move") return false;
+      console.log("player mode", this.mode);
 
-      //   if (this.col > this.playerX) {
-      //     xClose = Math.abs(this.col - this.playerX);
-      //   } else {
-      //     xClose = Math.abs(this.playerX - this.col);
-      //   }
-      //   if (this.row > this.playerY) {
-      //     yClose = Math.abs(this.row - this.playerY);
-      //   } else {
-      //     yClose = Math.abs(this.playerY - this.row);
-      //   }
-
-      //   if (xClose <= this.player.speed && yClose <= this.player.speed) {
-      //     isWithinSpeed = true;
-      //   }
-      // }
-      // return isWithinSpeed;
       return isHighlightedTile(
-        0,
+        this.tile,
         this.row,
         this.col,
         this.playerX,
@@ -53,6 +37,8 @@ export default {
   <div
     class="tile"
     :class="{
+      'empty-tile': tile === 0,
+      'filled-tile': tile === 1,
       'highlighted-tile': isHighlightedTile,
     }"
   >
@@ -67,6 +53,9 @@ export default {
   background-color: green;
   margin: 4px;
   position: relative;
+}
+.empty-tile {
+  background-color: black;
 }
 .highlighted-tile {
   background-color: blue !important;

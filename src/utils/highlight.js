@@ -1,7 +1,8 @@
 export function isHighlightedTile(tile, row, col, playerX, playerY, speed) {
   let isWithinSpeed = false;
-  //   if (this.mode === "player-move") {
   let xClose, yClose;
+
+  if (tile === 0) return false;
 
   if (col > playerX) {
     xClose = Math.abs(col - playerX);
@@ -17,6 +18,6 @@ export function isHighlightedTile(tile, row, col, playerX, playerY, speed) {
   if (xClose <= speed && yClose <= speed) {
     isWithinSpeed = true;
   }
-  //   }
+
   return isWithinSpeed;
 }

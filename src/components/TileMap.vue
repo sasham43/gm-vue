@@ -20,8 +20,6 @@ export default {
   },
   methods: {
     selectTile(tile, row, col) {
-      // console.log("select row", row);
-      // console.log("select col", col);
       let isNavigable = isHighlightedTile(
         tile,
         row,
@@ -32,28 +30,6 @@ export default {
       );
       this.$emit("tileSelect", tile, row, col, isNavigable);
     },
-    // isHighlightedTile(tile, row, col) {
-    //   let isWithinSpeed = false;
-    //   if (this.mode === "player-move") {
-    //     let xClose, yClose;
-
-    //     if (col > this.playerX) {
-    //       xClose = Math.abs(col - this.playerX);
-    //     } else {
-    //       xClose = Math.abs(this.playerX - col);
-    //     }
-    //     if (row > this.playerY) {
-    //       yClose = Math.abs(row - this.playerY);
-    //     } else {
-    //       yClose = Math.abs(this.playerY - row);
-    //     }
-
-    //     if (xClose <= this.player.speed && yClose <= this.player.speed) {
-    //       isWithinSpeed = true;
-    //     }
-    //   }
-    //   return isWithinSpeed;
-    // },
   },
   components: {
     Tile,
@@ -67,7 +43,7 @@ export default {
       <div v-for="(tile, colIndex) in row">
         <Tile
           @click="selectTile(tile, rowIndex, colIndex)"
-          v-bind="tile"
+          :tile="tile"
           :row="rowIndex"
           :col="colIndex"
           :player="player"
