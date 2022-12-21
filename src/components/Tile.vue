@@ -39,8 +39,8 @@ export default {
       //   );
       // }
     },
-    isHighlightedAttack() {
-      if (this.mode != "attack") return false;
+    isHighlightedRangedAttack() {
+      if (this.mode != "ranged") return false;
       return isHighlightedAttack(
         "ranged",
         this.col,
@@ -49,13 +49,19 @@ export default {
         this.playerY,
         2
       );
-      // return isHighlightedAttack(
-      //   "melee",
-      //   this.col,
-      //   this.row,
-      //   this.playerX,
-      //   this.playerY
-      // );
+    },
+    isHighlightedMeleeAttack() {
+      if (this.mode != "melee") return false;
+      return isHighlightedAttack(
+        "melee",
+        this.col,
+        this.row,
+        this.playerX,
+        this.playerY
+      );
+    },
+    isHighlightedAttack() {
+      return this.isHighlightedMeleeAttack || this.isHighlightedRangedAttack;
     },
   },
 };
@@ -82,15 +88,18 @@ export default {
   background-color: green;
   margin: 4px;
   position: relative;
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0);
 }
 .empty-tile {
   background-color: black;
 }
 .highlighted-move-tile {
-  background-color: blue !important;
+  border-color: blue !important;
 }
 .highlighted-attack-tile {
-  background-color: red !important;
+  border-color: red !important;
 }
 
 .debug {

@@ -10,6 +10,7 @@ export default {
     return {
       tileWidth: 50,
       tileHeight: 50,
+      tileBorderBase: 2,
       tileMarginBase: 4,
     };
   },
@@ -23,14 +24,21 @@ export default {
     currentTile() {
       return this.tiles[this.xPos][this.yPos];
     },
+    tileBorder() {
+      return this.tileBorderBase * 2;
+    },
     tileMargin() {
       return this.tileMarginBase * 2;
     },
     left() {
-      return `${(this.tileWidth + this.tileMargin) * this.xPos}px`;
+      return `${
+        (this.tileWidth + this.tileMargin + this.tileBorder) * this.xPos
+      }px`;
     },
     top() {
-      return `${(this.tileHeight + this.tileMargin) * this.yPos}px`;
+      return `${
+        (this.tileHeight + this.tileMargin + this.tileBorder) * this.yPos
+      }px`;
     },
   },
 };
@@ -43,7 +51,7 @@ export default {
 .actor {
   width: 25px;
   height: 25px;
-  margin: 16px;
+  margin: 18px;
   border: solid 1px red;
   background-color: brown;
 

@@ -44,6 +44,7 @@ export default {
           this.movePlayer(selectPos);
         }
       }
+      // add attacks here
     },
     movePlayer(targetPos) {
       this.player.pos = targetPos;
@@ -70,7 +71,8 @@ export default {
     {{ mode }}
   </div>
   <div>
-    <button @click="setMode('attack')">attack</button>
+    <button @click="setMode('melee')">melee</button>
+    <button @click="setMode('ranged')">ranged</button>
     <button @click="setMode('player-move')">player move</button>
   </div>
   <div class="tilemap">
