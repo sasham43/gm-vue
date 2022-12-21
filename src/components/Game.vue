@@ -18,6 +18,7 @@ export default {
         speed: 1,
         meleePower: 2,
         rangedPower: 1,
+        range: 2,
       },
       //   playerPos: "1,2",
       mode: "free",
@@ -27,7 +28,7 @@ export default {
           y: 4,
           speed: 1,
           attack: "melee",
-          health: 6,
+          health: 4,
         },
       ],
     };
@@ -64,11 +65,27 @@ export default {
           this.playerY
         );
 
-        let isEnemyPos = this.findEnemyPos(selectPos);
+        let enemy = this.findEnemyPos(selectPos);
 
-        if (isAttackable && isEnemyPos) {
+        if (isAttackable && enemy) {
           console.log("attack");
           enemy.health -= this.player.meleePower;
+        }
+      } else if (this.mode == "ranged") {
+        let isAttackable = isHighlightedAttack(
+          "ranged",
+          col,
+          row,
+          this.playerX,
+          this.playerY,
+          this.player.range
+        );
+
+        let enemy = this.findEnemyPos(selectPos);
+
+        if (isAttackable && enemy) {
+          console.log("attack");
+          enemy.health -= this.player.rangedPower;
         }
       }
       // add attacks here

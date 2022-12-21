@@ -8,6 +8,7 @@ export default {
     x: Number,
     y: Number,
     isEnemy: Boolean,
+    health: Number,
   },
   data() {
     return {
@@ -57,7 +58,7 @@ export default {
 <template>
   <div
     :style="{ top: top, left: left }"
-    :class="{ enemy: this.isEnemy }"
+    :class="{ enemy: this.isEnemy, dead: health <= 0 }"
     class="actor"
   ></div>
 </template>
@@ -78,5 +79,9 @@ export default {
 .enemy {
   border: solid 1px red;
   background-color: brown;
+}
+
+.dead {
+  background-color: black;
 }
 </style>
