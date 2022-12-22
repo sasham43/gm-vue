@@ -58,6 +58,13 @@ export default {
         (this.tileHeight + this.tileMargin + this.tileBorder) * this.yPos
       }px`;
     },
+    pose(){
+      if(this.health <= 0){
+        return 'standing'
+      } else {
+        return this.spritePose;
+      }
+    }
   },
   components: {
     Sprite,
@@ -70,7 +77,7 @@ export default {
     :class="{ enemy: this.isEnemy, dead: health <= 0 }"
     class="actor"
   >
-    <Sprite :spritesheet="sprite" :pose="spritePose"></Sprite>
+    <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
   </div>
 </template>
 

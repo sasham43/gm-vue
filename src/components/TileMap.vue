@@ -5,6 +5,7 @@ export default {
   props: {
     tiles: Array,
     player: Object,
+    currentActor: Object,
     mode: String,
   },
   computed: {
@@ -52,6 +53,7 @@ export default {
           :y="rowIndex"
           :x="colIndex"
           :player="player"
+          :currentActor="currentActor"
           :mode="mode"
         ></Tile>
       </div>

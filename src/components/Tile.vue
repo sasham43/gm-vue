@@ -6,6 +6,7 @@ export default {
     y: Number,
     x: Number,
     player: Object,
+    currentActor: Object,
     mode: String,
     tile: Number, // for now...
   },
@@ -20,27 +21,20 @@ export default {
       // return this.player?.pos.split(",")[1];
     },
     isHighlightedMove() {
-      if (this.mode != "player-move") return false;
+      if (this.mode != "player-move" && this.mode != 'enemy-move') return false;
       // console.log("player mode", this.mode);
 
       return isHighlightedMove(
         this.tile,
         this.y,
         this.x,
-        this.playerX,
-        this.playerY,
-        this.player.speed
+        this.currentActor.x,
+        this.currentActor.y,
+        this.currentActor.speed
+        // this.playerX,
+        // this.playerY,
+        // this.player.speed
       );
-
-      // else if (this.mode == "attack") {
-      //   return isHighlightedAttack(
-      //     "melee",
-      //     this.x,
-      //     this.row,
-      //     this.playerX,
-      //     this.playerY
-      //   );
-      // }
     },
     isHighlightedRangedAttack() {
       if (this.mode != "ranged") return false;
@@ -76,6 +70,7 @@ export default {
     :class="{
       'empty-tile': tile === 0,
       'filled-tile': tile === 1,
+      'enemy': currentActor.enemy,
       'highlighted-move-tile': isHighlightedMove,
       'highlighted-attack-tile': isHighlightedAttack,
     }"
@@ -100,6 +95,9 @@ export default {
 }
 .highlighted-move-tile {
   border-color: blue !important;
+}
+.enemy.highlighted-move-tile {
+  border-color: orange !important;
 }
 .highlighted-attack-tile {
   border-color: red !important;

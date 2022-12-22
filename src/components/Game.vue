@@ -69,6 +69,7 @@ export default {
         },
       ],
       turnOrder: [],
+      currentActor: {},
       currentActorMoved: false,
       currentActorAttacked: false,
     };
@@ -163,11 +164,11 @@ export default {
       this.moveAlongPath(this.player, result, this.player.speed);
     },
     setMode(mode) {
-      if (this.mode === mode) {
-        this.mode = "free";
-      } else {
+      // if (this.mode === mode) {
+      //   this.mode = "free";
+      // } else {
         this.mode = mode;
-      }
+      // }
     },
     rollInitiative() {
       let d20 = rollDice("1d20");
@@ -193,6 +194,8 @@ export default {
       if (currentActor.health <= 0) {
         this.nextTurn();
       }
+
+      this.currentActor = currentActor;
 
       if (currentActor.player) {
         // wait for player input
@@ -220,6 +223,7 @@ export default {
           if (this.currentActorMoved) {
             this.nextTurn();
           } else {
+            this.setMode('enemy-move')
             this.enemyChoice(() => {
               this.moveTowardsPlayer(actor);
               this.currentActorMoved = true;
@@ -255,6 +259,7 @@ export default {
           if (this.currentActorMoved) {
             this.nextTurn();
           } else {
+            this.setMode('enemy-move')
             this.enemyChoice(() => {
               this.moveTowardsPlayer(actor);
               this.currentActorMoved = true;
@@ -347,7 +352,7 @@ export default {
         actor.x = path[step].x;
         actor.y = path[step].y;
 
-        if (step == path.length - 1 || step == range) {
+        if (step == path.length - 1 || step == (range-1)) {
           window.clearInterval(steppingInterval);
         } else {
           step += 1;
@@ -440,7 +445,7 @@ export default {
       // remove last piece of route because we don't want to move ontop of player
       result.pop();
 
-      console.log("result", result);
+      console.log("result", result, actor);
 
       this.moveAlongPath(actor, result, actor.speed);
     },
@@ -475,6 +480,7 @@ export default {
     <TileMap
       @tile-select="onTileSelect"
       :player="player"
+      :currentActor="currentActor"
       :tiles="tiles"
       :mode="mode"
     ></TileMap>
