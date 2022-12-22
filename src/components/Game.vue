@@ -149,10 +149,7 @@ export default {
       });
     },
     movePlayer(x, y) {
-      // this.player.x = x;
-      // this.player.y = y;
       let result = this.pathfinding(this.player, { x, y });
-      console.log("guess we path found", result);
 
       this.moveAlongPath(this.player, result, this.player.speed);
     },
@@ -177,14 +174,12 @@ export default {
         return 0;
       });
 
-      this.turnOrder = initiativeRolls; //.map((a) => a.name);
-      // this.turnOrder = initiativeRolls.map((a) => a.name);
+      this.turnOrder = initiativeRolls;
 
       this.watchCurrentTurn(0); // start turns
     },
     watchCurrentTurn(newValue, oldValue) {
       let currentActor = this.turnOrder[newValue];
-      // let currentActor = console.log("current Actor", currentActor);
 
       if (currentActor.player) {
         // wait for player input
@@ -198,13 +193,6 @@ export default {
     enemyTurn(actor) {
       // check if can attack player
       if (actor.attack == "ranged") {
-        // let playerDistance = findDistance(
-        //   actor.x,
-        //   actor.y,
-        //   this.player.x,
-        //   this.player.y,
-        //   actor.range
-        // );
         let isAttackable = isHighlightedAttack(
           "ranged",
           this.player.x,
@@ -232,25 +220,6 @@ export default {
             this.nextTurn();
           });
         }
-
-        // console.log("player dist", playerDistance, actor.range);
-        // if (playerDistance.x > actor.range && playerDistance.y > actor.range) {
-        //   console.log("too far, moving");
-        //   if (this.currentActorMoved) {
-        //     this.nextTurn();
-        //   } else {
-        //     this.enemyChoice(() => {
-        //       this.moveTowardsPlayer(actor);
-        //     });
-        //   }
-        // } else {
-        //   // attack
-        //   console.log("ranged attack");
-        //   this.enemyChoice(() => {
-        //     this.player.health -= actor.rangedPower;
-        //   });
-        //   this.nextTurn();
-        // }
       } else if (actor.attack == "melee") {
         let isAttackable = isHighlightedAttack(
           "melee",
@@ -323,19 +292,6 @@ export default {
       }
 
       return neighbors;
-
-      // let neighbors = [
-      //   this.tiles[actor.y][actor.x + 1],
-      //   this.tiles[actor.y][actor.x - 1],
-      //   this.tiles[actor.y + 1] != undefined
-      //     ? this.tiles[actor.y + 1][actor.x]
-      //     : undefined,
-      //   this.tiles[actor.y - 1] != undefined
-      //     ? this.tiles[actor.y - 1][actor.x]
-      //     : undefined,
-      // ];
-
-      // return neighbors.filter((tile) => tile);
     },
     chooseLowestTotalScore(a, b) {
       if (a.totalScore > b.totalScore) return 1;
@@ -359,33 +315,22 @@ export default {
     findShortestPath(list) {
       let sorted = _.sortBy(list, "distanceFromStart").reverse();
       let start = sorted.shift();
-      // console.log("start", start);
-      // let nextSteps = sorted.filter((tile) => {
-      //   return tile.distanceFromStart == start.distanceFromStart - 1;
-      // });
-      // console.log("next", nextSteps);
       let path = this.findNextPathStep(start, [], list);
-      console.log("path:", path);
       return path;
     },
     findNextPathStep(start, pathList, closedList) {
-      // let sorted = _.sortBy(closedList, "distanceFromStart").reverse();
-      // let start = sorted.shift();
-      console.log("start", start);
       let nextSteps = closedList.filter((tile) => {
         return tile.distanceFromStart == start.distanceFromStart - 1;
       });
-      console.log("nextSteps", nextSteps);
+
       let next = nextSteps.find((step) => {
         let distance = findDistance(start.x, start.y, step.x, step.y).total;
 
         return distance === 1;
       });
 
-      console.log("next", next, closedList);
       pathList.push(start);
       if (next.distanceFromStart === 0) {
-        // pathList.push(next)
         return pathList;
       } else {
         return this.findNextPathStep(next, pathList, closedList);
@@ -399,7 +344,7 @@ export default {
       target.pos = `${target.x},${target.y}`;
       // get tiles N, E, S, W of actor, push to array
       let neighboringTiles = this.findNeighboringTiles(start);
-      console.log("n", neighboringTiles);
+      // console.log("n", neighboringTiles);
       // loop through array, calculate distance from each tile towards player (as total x + total y)
       // if there are unnavigable tiles in the 'count', disregard or weight distance differently
       neighboringTiles = neighboringTiles.map((tile) => {
@@ -419,14 +364,9 @@ export default {
         };
       });
 
-      console.log("n2", neighboringTiles, openList, closedList, loopNumber);
-      // return;
-
       // A* pathfinding
       openList = _.uniqBy([...openList, ...neighboringTiles], "pos");
       closedList = _.uniqBy([...closedList, start], "pos");
-      // openList = [...openList, ...neighboringTiles];
-      // closedList = [...closedList, start];
 
       // openList will be all available 'first moves' from a given origin (starting with actor starting point)
 
@@ -466,107 +406,9 @@ export default {
     },
     moveTowardsPlayer(actor) {
       let result = this.pathfinding(actor, this.player);
-      console.log("guess we path found", result);
+      // console.log("guess we path found", result);
 
       this.moveAlongPath(actor, result, actor.speed);
-
-      // get tiles N, E, S, W of actor, push to array
-      // let neighboringTiles = this.findNeighboringTiles(actor);
-      // console.log("n", neighboringTiles);
-      // // loop through array, calculate distance from each tile towards player (as total x + total y)
-      // // if there are unnavigable tiles in the 'count', disregard or weight distance differently
-      // neighboringTiles = neighboringTiles.map((tile) => {
-      //   let distanceToPlayer = findDistance(
-      //     tile.x,
-      //     tile.y,
-      //     this.player.x,
-      //     this.player.y
-      //   );
-      //   // console.log("pd", distanceToPlayer);
-      //   return {
-      //     ...tile,
-      //     distanceToPlayer,
-      //     distanceFromStart: 1,
-      //   };
-      // });
-      // // A* pathfinding
-      // let openList = [...neighboringTiles];
-      // let closedList = [actor];
-      // // openList will be all available 'first moves' from a given origin (starting with actor starting point)
-      // // after tiles have been added to openList, calculate F as G + H (G = cost of moving into tile, distance from start; H = simple distance from target, e.g. playerDistance)
-      // openList = openList.map((tile) => {
-      //   let totalScore = tile.distanceFromStart + tile.distanceToPlayer;
-      //   return {
-      //     ...tile,
-      //     totalScore,
-      //   };
-      // });
-      // openList.sort(this.chooseLowestTotalScore);
-      // // choose  tile from openList lowest F score, add to closedList, retrieve adjacent squares from it
-      // let nextTile = openList[0];
-      // repeat as necessary until we get to the tile that holds the player, then work back through the closed list until we find the tile path we need
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      // get tiles we can move to
-      // let highlightedTiles = [];
-      // this.tiles.forEach((row, x) => {
-      //   row.forEach((tile, y) => {
-      //     let canMoveTo = isHighlightedMove(
-      //       tile,
-      //       y,
-      //       x,
-      //       actor.x,
-      //       actor.y,
-      //       actor.speed
-      //     );
-      //     if (canMoveTo) {
-      //       highlightedTiles.push({
-      //         x,
-      //         y,
-      //         playerDistance: findDistance(
-      //           actor.x,
-      //           actor.y,
-      //           this.player.x,
-      //           this.player.y
-      //         ),
-      //       });
-      //     }
-      //   });
-      // });
-      // highlightedTiles.sort((a, b) => {
-      //   if (a.playerDistance.x > b.playerDistance.x) return 1;
-      //   if (a.playerDistance.y > b.playerDistance.y) return 1;
-      //   if (a.playerDistance.x < b.playerDistance.x) return -1;
-      //   if (a.playerDistance.y < b.playerDistance.y) return -1;
-      //   return 0;
-      // });
-      // console.log("hilgihgt", highlightedTiles);
-      // actor.x = highlightedTiles[0].x;
-      // actor.y = highlightedTiles[0].y;
-      // this.currentActorMoved = true;
-      // this.enemyTurn(actor);
     },
   },
   watch: {
