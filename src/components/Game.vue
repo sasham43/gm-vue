@@ -108,6 +108,10 @@ export default {
         this.currentTurn -= 1;
       }
     },
+    playerAttack(){
+          this.currentDefender.health -= this.player.attackPower;
+          this.currentActorAttacked = true;
+    },
     onTileSelect(tile, row, col, isNavigable) {
       let selectPos = `${col},${row}`;
       // console.log("select", row, col, this.mode, isNavigable);
@@ -135,6 +139,7 @@ export default {
 
         if (isAttackable && enemy) {
           this.currentDefender = enemy;
+          this.player.attackPower = this.player.meleePower;
           this.displayAttackView();
           // enemy.health -= this.player.meleePower;
           // this.currentActorAttacked = true;
@@ -153,6 +158,7 @@ export default {
 
         if (isAttackable && enemy) {
           this.currentDefender = enemy;
+          this.player.attackPower = this.player.rangedPower;
           this.displayAttackView();
           // enemy.health -= this.player.rangedPower;
           // this.currentActorAttacked = true;
@@ -204,8 +210,10 @@ export default {
       }
 
       this.currentActor = currentActor;
+      this.currentDefender = {}
 
       if (currentActor.player) {
+
         // wait for player input
         console.log("player turn");
       } else {
@@ -215,6 +223,7 @@ export default {
       }
     },
     enemyTurn(actor) {
+      this.currentDefender = this.player;
       // check if can attack player
       if (actor.attack == "ranged") {
         let isAttackable = isHighlightedAttack(
@@ -518,6 +527,14 @@ export default {
       <div>
         Attacker: {{ currentActor.name }}
       </div>
+      <!-- <div>
+        Power: {{ currentAct }}
+      </div> -->
+      <div>
+        <button class="attack-button" @click="playerAttack()">
+          Attack
+        </button>
+      </div>
       <div class="attack-view-sprite-container">
         <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
       </div>
@@ -525,6 +542,12 @@ export default {
     <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy}">
       <div>
         Defender: {{ currentDefender.name }}
+      </div>
+
+      <div>
+        <button class="defend-button">
+          Defend
+        </button>
       </div>
       <div class="attack-view-sprite-container">
         <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
@@ -568,5 +591,21 @@ export default {
     display: flex;
     justify-content: center;
     margin-top: 50px;
+    pointer-events: none;
+}
+button {
+  z-index: 50;
+}
+
+
+.defend-button,
+.attack-button {
+  opacity: 0;
+}
+.enemy-view .attack-button {
+  opacity: 0;
+}
+.player-view .attack-button {
+  opacity: 1;
 }
 </style>
