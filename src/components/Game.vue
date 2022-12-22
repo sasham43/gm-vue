@@ -74,6 +74,7 @@ export default {
       currentActorAttacked: false,
       enemyChoiceTimeout: null,
       currentDefender: {},
+      showAttackInfo: false,
     };
   },
   computed: {
@@ -478,6 +479,7 @@ export default {
     },
     displayAttackView(){
       // here
+      this.showAttackInfo = true;
     }
   },
   watch: {
@@ -530,10 +532,10 @@ export default {
       <div>
         Attacker: {{ currentActor.name }}
       </div>
-      <div>
+      <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
         Power: {{ currentActor.attackPower }}
       </div>
-      <div>
+      <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
         <button class="attack-button" @click="playerAttack()">
           Attack
         </button>
@@ -546,7 +548,7 @@ export default {
       <div>
         Defender: {{ currentDefender.name }}
       </div>
-      <div>
+      <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
         Health: {{ currentDefender.health }}
       </div>
 
@@ -608,6 +610,13 @@ button {
   z-index: 50;
 }
 
+
+.attack-info {
+  opacity: 0;
+}
+.show-attack-info {
+  opacity: 1;
+}
 
 .defend-button,
 .attack-button {

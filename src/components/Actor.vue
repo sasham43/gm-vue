@@ -22,6 +22,7 @@ export default {
       tileHeight: 50,
       tileBorderBase: 2,
       tileMarginBase: 4,
+      isTakingDamage: false,
     };
   },
   computed: {
@@ -64,6 +65,18 @@ export default {
       } else {
         return this.spritePose;
       }
+    },
+  },
+  watch: {
+    health(newValue, oldValue){
+      if(newValue < oldValue){
+        let damageDuration = 1000;
+        this.isTakingDamage = true;
+
+        window.setTimeout(() => {
+          this.isTakingDamage = false;
+        }, damageDuration)
+      }
     }
   },
   components: {
@@ -74,7 +87,7 @@ export default {
 <template>
   <div
     :style="{ top: top, left: left }"
-    :class="{ enemy: this.isEnemy, dead: health <= 0 }"
+    :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage }"
     class="actor"
   >
     <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
@@ -98,6 +111,11 @@ export default {
   /* isometric */
   /* transform: scaleX(2) scaleY(2) rotate(-45deg) translateY(-10px); */
   transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2)
+}
+
+.damage {
+  /* filter: hue-rotate(49deg) saturate(2); */
+  filter: sepia() saturate(10000%) hue-rotate(40deg)
 }
 
 .enemy {

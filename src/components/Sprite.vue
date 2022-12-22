@@ -162,56 +162,14 @@ export default {
     left() {
       return this.animPoses[this.animStep].left;
     },
-    // currentPosition() {
-    //   console.log(
-    //     "animPoses",
-    //     this.animPoses,
-    //     this.animPoses[this.animStep].position
-    //   );
-    //   if (this.animPoses[this.animStep]) {
-    //     return this.animPoses[this.animStep].position;
-    //   } else {
-    //     return "top center";
-    //   }
-    // },
   },
   watch: {
     pose() {
       return this.watchPose();
     },
-    // pose(newValue) {
-    //   console.log("newvalue", newValue, newValue.includes("walk"));
-    //   if (newValue.includes("walk")) {
-    //     console.log("why");
-    //     this.animPoses = this.poses.filter((pose) => {
-    //       console.log("pose?", pose.pose.includes(newValue));
-    //       return pose.pose.includes(newValue);
-    //     });
-    //     console.log("this.animPoses", this.animPoses);
-
-    //     this.animate();
-    //   }
-
-    //   if (newValue.includes("standing")) {
-    //     this.animPoses = this.poses[0];
-    //     this.stopAnimating();
-    //   }
-    // },
   },
   mounted() {
     this.watchPose();
-    // if (this.pose.includes("walk")) {
-    //   console.log("oh no here we are");
-    //   this.animPoses = this.poses.filter((pose) => {
-    //     console.log("pose?", pose.pose.includes(this.pose));
-    //     return pose.pose.includes(this.pose);
-    //   });
-    //   console.log("this.animPoses mounted", this.animPoses);
-    //   this.animate();
-    // }
-    // if (this.pose.includes("standing")) {
-    //   this.stopAnimating();
-    // }
   },
   unmounted() {
     this.stopAnimating();
@@ -223,17 +181,6 @@ export default {
   <div class="sprite-container">
     <img class="sprite" :src="spritesheet" :style="{ top: top, left: left }" />
   </div>
-  <!-- <div>
-    {{ animStep }}
-  </div> -->
-  <!-- <div
-    class="sprite"
-    :style="{
-      'background-image': `url(${spritesheet})`,
-      'background-position': animPosition,
-    }"
-  ></div>
-  <div>debug: {{ animPosition }}</div> -->
 </template>
 
 <style scoped>
