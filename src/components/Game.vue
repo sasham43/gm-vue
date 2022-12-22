@@ -509,8 +509,8 @@ export default {
   </div>
   <div>
     <div>
-      <button @click="setMode('melee')">melee</button>
-      <button @click="setMode('ranged')">ranged</button>
+      <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
+      <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button>
       <button @click="setMode('player-move')">player move</button>
     </div>
     <div class="tilemap">
@@ -565,6 +565,11 @@ export default {
 <style scoped>
 .tilemap {
   position: relative;
+
+  margin-top: 50vh;
+
+  /* transform: rotate(45deg) scaleX(2) scaleY(.75); */
+  transform: scaleX(2) scaleY(.5) rotate(45deg);
 }
 .turn {
   border-width: 2px;

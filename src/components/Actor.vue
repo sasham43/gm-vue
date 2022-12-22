@@ -94,6 +94,10 @@ export default {
   pointer-events: none;
   transition: 0.2s all;
   transform: scale(1.5);
+
+  /* isometric */
+  /* transform: scaleX(2) scaleY(2) rotate(-45deg) translateY(-10px); */
+  transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2)
 }
 
 .enemy {
@@ -102,6 +106,7 @@ export default {
 }
 
 .dead {
-  background-color: black;
+  /* background-color: black; */
+  filter: grayscale(100%);
 }
 </style>
