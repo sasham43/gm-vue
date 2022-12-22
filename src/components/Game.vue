@@ -35,6 +35,7 @@ export default {
         rangedPower: 1,
         range: 2,
         initiative: 0,
+        sprite: "src/assets/hero-1.png",
       },
       //   playerPos: "1,2",
       mode: "free",
@@ -50,6 +51,7 @@ export default {
           health: 4,
           healthMax: 4,
           initiative: 0,
+          sprite: "src/assets/enemy-1.png",
         },
         {
           enemy: true,
@@ -63,6 +65,7 @@ export default {
           initiative: 0,
           range: 2,
           rangedPower: 2,
+          sprite: "src/assets/enemy-2.png",
         },
       ],
       turnOrder: [],
@@ -186,6 +189,10 @@ export default {
     },
     watchCurrentTurn(newValue, oldValue) {
       let currentActor = this.turnOrder[newValue];
+
+      if (currentActor.health <= 0) {
+        this.nextTurn();
+      }
 
       if (currentActor.player) {
         // wait for player input

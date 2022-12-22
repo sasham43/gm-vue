@@ -75,19 +75,19 @@ export default {
         {
           pose: "n-walk-1",
 
-          top: "-72px",
+          top: "-74px",
           left: "0px",
         },
         {
           pose: "n-walk-2",
 
-          top: "-72px",
+          top: "-74px",
           left: "-24px",
         },
         {
           pose: "n-walk-3",
 
-          top: "-72px",
+          top: "-74px",
           left: "-48px",
         },
       ],

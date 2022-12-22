@@ -10,6 +10,7 @@ export default {
     y: Number,
     isEnemy: Boolean,
     health: Number,
+    sprite: String,
     spritePose: {
       type: String,
       default: "standing",
@@ -69,26 +70,28 @@ export default {
     :class="{ enemy: this.isEnemy, dead: health <= 0 }"
     class="actor"
   >
-    <Sprite spritesheet="src/assets/hero-1.png" :pose="spritePose"></Sprite>
+    <Sprite :spritesheet="sprite" :pose="spritePose"></Sprite>
   </div>
 </template>
 
 <style scoped>
 .actor {
-  width: 25px;
-  height: 25px;
+  width: 24px;
+  height: 24px;
   margin: 18px;
-  border: solid 1px aquamarine;
-  background-color: darkturquoise;
+  border: solid 1px rgba(0, 0, 0, 0);
+  /* border: solid 1px aquamarine;
+  background-color: darkturquoise; */
 
   position: absolute;
   pointer-events: none;
   transition: 0.2s all;
+  transform: scale(1.5);
 }
 
 .enemy {
-  border: solid 1px red;
-  background-color: brown;
+  /* border: solid 1px red;
+  background-color: brown; */
 }
 
 .dead {
