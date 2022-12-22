@@ -73,6 +73,7 @@ export default {
       currentActorMoved: false,
       currentActorAttacked: false,
       enemyChoiceTimeout: null,
+      currentDefender: {},
     };
   },
   computed: {
@@ -116,6 +117,7 @@ export default {
           this.mode = "player-move";
         }
       } else if (this.mode == "player-move") {
+        console.log('select player move')
         if (isNavigable) {
           this.movePlayer(col, row);
           this.currentActorMoved = true;
@@ -132,8 +134,10 @@ export default {
         let enemy = this.findEnemyPos(selectPos);
 
         if (isAttackable && enemy) {
-          enemy.health -= this.player.meleePower;
-          this.currentActorAttacked = true;
+          this.currentDefender = enemy;
+          this.displayAttackView();
+          // enemy.health -= this.player.meleePower;
+          // this.currentActorAttacked = true;
         }
       } else if (this.mode == "ranged") {
         let isAttackable = isHighlightedAttack(
@@ -148,8 +152,10 @@ export default {
         let enemy = this.findEnemyPos(selectPos);
 
         if (isAttackable && enemy) {
-          enemy.health -= this.player.rangedPower;
-          this.currentActorAttacked = true;
+          this.currentDefender = enemy;
+          this.displayAttackView();
+          // enemy.health -= this.player.rangedPower;
+          // this.currentActorAttacked = true;
         }
       }
 
@@ -458,6 +464,9 @@ export default {
         this.nextTurn();
       }
     },
+    displayAttackView(){
+      // here
+    }
   },
   watch: {
     currentTurn(newValue, oldValue) {
@@ -475,35 +484,50 @@ export default {
 </script>
 
 <template>
-  <div>
-    <button @click="setMode('melee')">melee</button>
-    <button @click="setMode('ranged')">ranged</button>
-    <button @click="setMode('player-move')">player move</button>
-  </div>
-  <div class="tilemap">
-    <TileMap
-      @tile-select="onTileSelect"
-      :player="player"
-      :currentActor="currentActor"
-      :tiles="tiles"
-      :mode="mode"
-    ></TileMap>
-    <Actor v-bind="player" :tiles="tiles"></Actor>
-    <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
-    <!-- <Sprite pose="standing" spritesheet="src/assets/hero-1.png"></Sprite>
-    <Sprite pose="w-walk" spritesheet="src/assets/hero-1.png"></Sprite> -->
-  </div>
+
   <div>
     <button @click="previousTurn()">&lt; turn</button>
     <button @click="rollInitiative()">battle</button>
     <button @click="nextTurn()">> turn</button>
     <div>
-      <div
-        class="turn"
-        :class="{ 'current-turn': currentTurn == turn }"
-        v-for="(actor, turn) in turnOrder"
-      >
+      <div class="turn" :class="{ 'current-turn': currentTurn == turn }" v-for="(actor, turn) in turnOrder">
         {{ actor.name }}
+      </div>
+    </div>
+  </div>
+  <div>
+    <div>
+      <button @click="setMode('melee')">melee</button>
+      <button @click="setMode('ranged')">ranged</button>
+      <button @click="setMode('player-move')">player move</button>
+    </div>
+    <div class="tilemap">
+      <TileMap
+        @tile-select="onTileSelect"
+        :player="player"
+        :currentActor="currentActor"
+        :tiles="tiles"
+        :mode="mode"
+      ></TileMap>
+      <Actor v-bind="player" :tiles="tiles"></Actor>
+      <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
+    </div>
+  </div>
+  <div class="attack-view-container">
+    <div class="attacker" :class="{'player-view': currentActor.player, 'enemy-view': currentActor.enemy}">
+      <div>
+        Attacker: {{ currentActor.name }}
+      </div>
+      <div class="attack-view-sprite-container">
+        <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
+      </div>
+    </div>
+    <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy}">
+      <div>
+        Defender: {{ currentDefender.name }}
+      </div>
+      <div class="attack-view-sprite-container">
+        <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
       </div>
     </div>
   </div>
@@ -520,5 +544,29 @@ export default {
 }
 .current-turn {
   border-color: blueviolet;
+}
+
+.player-view {
+  background:linear-gradient(aquamarine 0%, rgba(255, 255, 255, 0) 50%);
+  color: black;
+}
+.enemy-view {
+  background:linear-gradient(orangered 0%, rgba(255, 255, 255, 0) 50%);
+  /* color: black; */
+}
+
+.attack-view-container {
+  display: flex;
+  flex-direction: row;
+  width: 30vw;
+}
+.attack-view-container>div {
+  flex-grow: 1;
+}
+.attack-view-sprite-container {
+    transform: scale(500%);
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
 }
 </style>
