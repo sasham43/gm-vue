@@ -406,7 +406,9 @@ export default {
     },
     moveTowardsPlayer(actor) {
       let result = this.pathfinding(actor, this.player);
-      // console.log("guess we path found", result);
+
+      // remove last piece of route because we don't want to move ontop of player
+      result.unshift();
 
       this.moveAlongPath(actor, result, actor.speed);
     },
