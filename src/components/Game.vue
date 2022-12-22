@@ -45,6 +45,7 @@ export default {
           y: 4,
           speed: 1,
           attack: "melee",
+          meleePower: 2,
           health: 4,
           healthMax: 4,
           initiative: 0,
@@ -246,6 +247,33 @@ export default {
         //   });
         //   this.nextTurn();
         // }
+      } else if (actor.attack == "melee") {
+        let isAttackable = isHighlightedAttack(
+          "melee",
+          this.player.x,
+          this.player.y,
+          actor.x,
+          actor.y
+        );
+        console.log("is attackable", isAttackable);
+        if (!isAttackable) {
+          console.log("too far, moving");
+          if (this.currentActorMoved) {
+            this.nextTurn();
+          } else {
+            this.enemyChoice(() => {
+              this.moveTowardsPlayer(actor);
+            });
+          }
+        } else {
+          // attack
+          console.log("melee attack");
+          this.enemyChoice(() => {
+            this.player.health -= actor.meleePower;
+            console.log("player health:", this.player.health);
+            this.nextTurn();
+          });
+        }
       }
     },
     enemyChoice(action) {
