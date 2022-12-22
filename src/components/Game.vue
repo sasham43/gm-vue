@@ -134,6 +134,7 @@ export default {
 
         if (isAttackable && enemy) {
           enemy.health -= this.player.rangedPower;
+          this.nextTurn();
         }
       }
 
@@ -309,9 +310,6 @@ export default {
 </script>
 
 <template>
-  <!-- <div>
-    {{ mode }}
-  </div> -->
   <div>
     <button @click="setMode('melee')">melee</button>
     <button @click="setMode('ranged')">ranged</button>
