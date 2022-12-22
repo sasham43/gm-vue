@@ -149,8 +149,12 @@ export default {
       });
     },
     movePlayer(x, y) {
-      this.player.x = x;
-      this.player.y = y;
+      // this.player.x = x;
+      // this.player.y = y;
+      let result = this.pathfinding(this.player, { x, y });
+      console.log("guess we path found", result);
+
+      this.moveAlongPath(this.player, result, this.player.speed);
     },
     setMode(mode) {
       if (this.mode === mode) {
