@@ -121,7 +121,7 @@ export default {
           this.mode = "player-move";
         }
       } else if (this.mode == "player-move") {
-        console.log('select player move')
+        // console.log('select player move')
         if (isNavigable) {
           this.movePlayer(col, row);
           this.currentActorMoved = true;
@@ -205,7 +205,10 @@ export default {
     watchCurrentTurn(newValue, oldValue) {
       let currentActor = this.turnOrder[newValue];
 
+
+
       if (currentActor.health <= 0) {
+        console.log('current actor health 0', currentActor)
         this.nextTurn();
       }
 
@@ -234,9 +237,9 @@ export default {
           actor.y,
           actor.range
         );
-        console.log("is attackable", isAttackable);
+        // console.log("is attackable", isAttackable);
         if (!isAttackable) {
-          console.log("too far, moving");
+          // console.log("too far, moving");
           if (this.currentActorMoved) {
             this.nextTurn();
           } else {
@@ -252,10 +255,10 @@ export default {
           if (this.currentActorAttacked) {
             this.nextTurn();
           } else {
-            console.log("ranged attack");
+            // console.log("ranged attack");
             this.enemyChoice(() => {
               this.player.health -= actor.rangedPower;
-              console.log("player health:", this.player.health);
+              // console.log("player health:", this.player.health);
               // this.nextTurn();
               this.currentActorAttacked = true;
               this.enemyTurn(actor);
@@ -270,9 +273,9 @@ export default {
           actor.x,
           actor.y
         );
-        console.log("is attackable", isAttackable);
+        // console.log("is attackable", isAttackable);
         if (!isAttackable) {
-          console.log("too far, moving");
+          // console.log("too far, moving");
           if (this.currentActorMoved) {
             this.nextTurn();
           } else {
@@ -288,10 +291,10 @@ export default {
           if (this.currentActorAttacked) {
             this.nextTurn();
           } else {
-            console.log("melee attack");
+            // console.log("melee attack");
             this.enemyChoice(() => {
               this.player.health -= actor.meleePower;
-              console.log("player health:", this.player.health);
+              // console.log("player health:", this.player.health);
               this.currentActorAttacked = true;
               this.enemyTurn(actor);
             });
@@ -305,7 +308,7 @@ export default {
       window.clearTimeout(this.enemyChoiceTimeout)
 
       this.enemyChoiceTimeout = window.setTimeout(() => {
-        console.log("choice");
+        // console.log("choice");
         action();
       }, enemyDecisionSpeed);
     },
@@ -460,11 +463,11 @@ export default {
     },
     moveTowardsPlayer(actor) {
       let result = this.pathfinding(actor, this.player);
-      console.log("path lenght", result.length);
+      // console.log("path lenght", result.length);
       // remove last piece of route because we don't want to move ontop of player
       result.pop();
 
-      console.log("result", result, actor);
+      // console.log("result", result, actor);
 
       this.moveAlongPath(actor, result, actor.speed);
     },
@@ -527,9 +530,9 @@ export default {
       <div>
         Attacker: {{ currentActor.name }}
       </div>
-      <!-- <div>
-        Power: {{ currentAct }}
-      </div> -->
+      <div>
+        Power: {{ currentActor.attackPower }}
+      </div>
       <div>
         <button class="attack-button" @click="playerAttack()">
           Attack
@@ -542,6 +545,9 @@ export default {
     <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy}">
       <div>
         Defender: {{ currentDefender.name }}
+      </div>
+      <div>
+        Health: {{ currentDefender.health }}
       </div>
 
       <div>
