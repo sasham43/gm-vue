@@ -27,6 +27,8 @@ export default {
         y: 2,
         speed: 1,
         meleePower: 2,
+        health: 10,
+        healthMax: 10,
         rangedPower: 1,
         range: 2,
         initiative: 0,
@@ -42,6 +44,7 @@ export default {
           speed: 1,
           attack: "melee",
           health: 4,
+          healthMax: 4,
           initiative: 0,
         },
         {
@@ -52,8 +55,10 @@ export default {
           speed: 1,
           attack: "ranged",
           health: 4,
+          healthMax: 4,
           initiative: 0,
           range: 2,
+          rangedPower: 2,
         },
       ],
       turnOrder: [],
@@ -215,6 +220,7 @@ export default {
           console.log("ranged attack");
           this.enemyChoice(() => {
             this.player.health -= actor.rangedPower;
+            console.log("player health:", this.player.health);
             this.nextTurn();
           });
         }
@@ -318,12 +324,7 @@ export default {
       :tiles="tiles"
       :mode="mode"
     ></TileMap>
-    <Actor
-      :x="player.x"
-      :y="player.y"
-      :speed="player.speed"
-      :tiles="tiles"
-    ></Actor>
+    <Actor v-bind="player" :tiles="tiles"></Actor>
     <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
   </div>
   <div>
