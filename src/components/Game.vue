@@ -90,6 +90,9 @@ export default {
       } else {
         this.currentTurn += 1;
       }
+
+      this.currentActorAttacked = false;
+      this.currentActorMoved = false;
     },
     previousTurn() {
       if (this.currentTurn == 0) {
@@ -109,6 +112,7 @@ export default {
       } else if (this.mode == "player-move") {
         if (isNavigable) {
           this.movePlayer(col, row);
+          this.currentActorMoved = true;
         }
       } else if (this.mode == "melee") {
         let isAttackable = isHighlightedAttack(
@@ -123,6 +127,7 @@ export default {
 
         if (isAttackable && enemy) {
           enemy.health -= this.player.meleePower;
+          this.currentActorAttacked = true;
         }
       } else if (this.mode == "ranged") {
         let isAttackable = isHighlightedAttack(
@@ -138,7 +143,7 @@ export default {
 
         if (isAttackable && enemy) {
           enemy.health -= this.player.rangedPower;
-          this.nextTurn();
+          this.currentActorAttacked = true;
         }
       }
 
@@ -210,16 +215,24 @@ export default {
           } else {
             this.enemyChoice(() => {
               this.moveTowardsPlayer(actor);
+              this.currentActorMoved = true;
+              this.enemyTurn(actor);
             });
           }
         } else {
           // attack
-          console.log("ranged attack");
-          this.enemyChoice(() => {
-            this.player.health -= actor.rangedPower;
-            console.log("player health:", this.player.health);
+          if (this.currentActorAttacked) {
             this.nextTurn();
-          });
+          } else {
+            console.log("ranged attack");
+            this.enemyChoice(() => {
+              this.player.health -= actor.rangedPower;
+              console.log("player health:", this.player.health);
+              // this.nextTurn();
+              this.currentActorAttacked = true;
+              this.enemyTurn(actor);
+            });
+          }
         }
       } else if (actor.attack == "melee") {
         let isAttackable = isHighlightedAttack(
@@ -237,16 +250,23 @@ export default {
           } else {
             this.enemyChoice(() => {
               this.moveTowardsPlayer(actor);
+              this.currentActorMoved = true;
+              this.enemyTurn(actor);
             });
           }
         } else {
           // attack
-          console.log("melee attack");
-          this.enemyChoice(() => {
-            this.player.health -= actor.meleePower;
-            console.log("player health:", this.player.health);
+          if (this.currentActorAttacked) {
             this.nextTurn();
-          });
+          } else {
+            console.log("melee attack");
+            this.enemyChoice(() => {
+              this.player.health -= actor.meleePower;
+              console.log("player health:", this.player.health);
+              this.currentActorAttacked = true;
+              this.enemyTurn(actor);
+            });
+          }
         }
       }
     },
@@ -304,7 +324,7 @@ export default {
 
       let steppingInterval = window.setInterval(function () {
         // calculate sprite direction
-        console.log("actor", actor.x, path[step].x, actor.y, path[step].y);
+        // console.log("actor", actor.x, path[step].x, actor.y, path[step].y);
         let spriteDirection = "";
         if (actor.x == path[step].x && actor.y > path[step].y) {
           spriteDirection = "n-walk";
@@ -340,7 +360,6 @@ export default {
 
       let next = nextSteps.find((step) => {
         let distance = findDistance(start.x, start.y, step.x, step.y).total;
-
         return distance === 1;
       });
 
@@ -359,7 +378,6 @@ export default {
       target.pos = `${target.x},${target.y}`;
       // get tiles N, E, S, W of actor, push to array
       let neighboringTiles = this.findNeighboringTiles(start);
-      // console.log("n", neighboringTiles);
       // loop through array, calculate distance from each tile towards player (as total x + total y)
       // if there are unnavigable tiles in the 'count', disregard or weight distance differently
       neighboringTiles = neighboringTiles.map((tile) => {
@@ -369,7 +387,6 @@ export default {
           target.x,
           target.y
         ).total;
-        // console.log("pd", distanceToTarget);
 
         return {
           pos: `${tile.x},${tile.y}`,
@@ -380,10 +397,9 @@ export default {
       });
 
       // A* pathfinding
+      // openList will be all available 'first moves' from a given origin (starting with actor starting point)
       openList = _.uniqBy([...openList, ...neighboringTiles], "pos");
       closedList = _.uniqBy([...closedList, start], "pos");
-
-      // openList will be all available 'first moves' from a given origin (starting with actor starting point)
 
       // after tiles have been added to openList, calculate F as G + H (G = cost of moving into tile, distance from start; H = simple distance from target, e.g. playerDistance)
       openList = openList.map((tile) => {
@@ -400,14 +416,6 @@ export default {
 
       // check if tile contains target
       if (nextTile.x == target.x && nextTile.y == target.y) {
-        console.log(
-          "found target",
-          nextTile,
-          closedList.map((c) => {
-            return { pos: c.pos, distanceFromStart: c.distanceFromStart };
-          })
-        );
-
         return this.findShortestPath([...closedList, nextTile]).reverse();
       } else {
         return this.pathfinding(
@@ -421,16 +429,26 @@ export default {
     },
     moveTowardsPlayer(actor) {
       let result = this.pathfinding(actor, this.player);
-
       // remove last piece of route because we don't want to move ontop of player
       result.unshift();
 
       this.moveAlongPath(actor, result, actor.speed);
     },
+    watchCurrentActorActions() {
+      if (this.currentActorAttacked && this.currentActorMoved) {
+        this.nextTurn();
+      }
+    },
   },
   watch: {
     currentTurn(newValue, oldValue) {
       return this.watchCurrentTurn(newValue, oldValue);
+    },
+    currentActorAttacked() {
+      return this.watchCurrentActorActions();
+    },
+    currentActorMoved() {
+      return this.watchCurrentActorActions();
     },
   },
   components: { TileMap, Actor, Sprite },
