@@ -513,7 +513,7 @@ export default {
     <div>
       <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
       <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button>
-      <button @click="setMode('player-move')">player move</button>
+      <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
     </div>
     <div class="tilemap">
       <TileMap
