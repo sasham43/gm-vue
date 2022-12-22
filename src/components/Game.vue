@@ -206,12 +206,10 @@ export default {
     watchCurrentTurn(newValue, oldValue) {
       let currentActor = this.turnOrder[newValue];
 
-
-
-      if (currentActor.health <= 0) {
-        console.log('current actor health 0', currentActor)
-        this.nextTurn();
-      }
+      // if (currentActor.health <= 0) {
+      //   console.log('current actor health 0', currentActor)
+      //   this.nextTurn();
+      // }
 
       this.currentActor = currentActor;
       this.currentDefender = {}
@@ -480,6 +478,11 @@ export default {
     displayAttackView(){
       // here
       this.showAttackInfo = true;
+    },
+    filterDead(){
+      this.turnOrder = this.turnOrder.filter(actor => {
+        return actor.health > 0;
+      })
     }
   },
   watch: {
@@ -487,7 +490,8 @@ export default {
       return this.watchCurrentTurn(newValue, oldValue);
     },
     currentActorAttacked() {
-      return this.watchCurrentActorActions();
+      this.watchCurrentActorActions();
+      this.filterDead()
     },
     currentActorMoved() {
       return this.watchCurrentActorActions();
