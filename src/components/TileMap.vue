@@ -21,18 +21,19 @@ export default {
     },
   },
   methods: {
-    selectTile(tile, row, col) {
-      console.log("row", row);
-      console.log("col", col);
+    selectTile(tile, y, x) {
+      // console.log("x", x);
+      // console.log("y", y);
+      console.log("x,y", x, y);
       let isNavigable = isHighlightedMove(
         tile,
-        row,
-        col,
+        y,
+        x,
         this.playerX,
         this.playerY,
         this.player.speed
       );
-      this.$emit("tileSelect", tile, row, col, isNavigable);
+      this.$emit("tileSelect", tile, y, x, isNavigable);
     },
   },
   components: {
