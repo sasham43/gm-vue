@@ -72,6 +72,7 @@ export default {
       currentActor: {},
       currentActorMoved: false,
       currentActorAttacked: false,
+      enemyChoiceTimeout: null,
     };
   },
   computed: {
@@ -89,14 +90,15 @@ export default {
   },
   methods: {
     nextTurn() {
+
+      this.currentActorAttacked = false;
+      this.currentActorMoved = false;
+
       if (this.currentTurn === this.turnOrder.length - 1) {
         this.currentTurn = 0;
       } else {
         this.currentTurn += 1;
       }
-
-      this.currentActorAttacked = false;
-      this.currentActorMoved = false;
     },
     previousTurn() {
       if (this.currentTurn == 0) {
@@ -285,7 +287,9 @@ export default {
     enemyChoice(action) {
       let enemyDecisionSpeed = 2000;
 
-      window.setTimeout(() => {
+      window.clearTimeout(this.enemyChoiceTimeout)
+
+      this.enemyChoiceTimeout = window.setTimeout(() => {
         console.log("choice");
         action();
       }, enemyDecisionSpeed);
