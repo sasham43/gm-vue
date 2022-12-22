@@ -303,6 +303,20 @@ export default {
       let step = 0;
 
       let steppingInterval = window.setInterval(function () {
+        // calculate sprite direction
+        console.log("actor", actor.x, path[step].x, actor.y, path[step].y);
+        let spriteDirection = "";
+        if (actor.x == path[step].x && actor.y > path[step].y) {
+          spriteDirection = "n-walk";
+        } else if (actor.x == path[step].x && actor.y < path[step].y) {
+          spriteDirection = "s-walk";
+        } else if (actor.x > path[step].x && actor.y == path[step].y) {
+          spriteDirection = "w-walk";
+        } else if (actor.x == path[step].x && actor.y == path[step].y) {
+          spriteDirection = "e-walk";
+        }
+        actor.spritePose = spriteDirection;
+        // check if in attack range and break loop
         actor.x = path[step].x;
         actor.y = path[step].y;
 
@@ -438,8 +452,8 @@ export default {
     ></TileMap>
     <Actor v-bind="player" :tiles="tiles"></Actor>
     <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
-    <Sprite pose="standing" spritesheet="src/assets/hero-1.png"></Sprite>
-    <Sprite pose="w-walk" spritesheet="src/assets/hero-1.png"></Sprite>
+    <!-- <Sprite pose="standing" spritesheet="src/assets/hero-1.png"></Sprite>
+    <Sprite pose="w-walk" spritesheet="src/assets/hero-1.png"></Sprite> -->
   </div>
   <div>
     <button @click="previousTurn()">&lt; turn</button>

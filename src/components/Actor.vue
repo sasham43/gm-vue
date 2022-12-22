@@ -1,4 +1,5 @@
 <script>
+import Sprite from "./Sprite.vue";
 export default {
   props: {
     type: String,
@@ -9,6 +10,10 @@ export default {
     y: Number,
     isEnemy: Boolean,
     health: Number,
+    spritePose: {
+      type: String,
+      default: "standing",
+    },
   },
   data() {
     return {
@@ -53,6 +58,9 @@ export default {
       }px`;
     },
   },
+  components: {
+    Sprite,
+  },
 };
 </script>
 <template>
@@ -60,7 +68,9 @@ export default {
     :style="{ top: top, left: left }"
     :class="{ enemy: this.isEnemy, dead: health <= 0 }"
     class="actor"
-  ></div>
+  >
+    <Sprite spritesheet="src/assets/hero-1.png" :pose="spritePose"></Sprite>
+  </div>
 </template>
 
 <style scoped>

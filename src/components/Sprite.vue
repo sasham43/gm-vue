@@ -137,13 +137,13 @@ export default {
     },
     watchPose() {
       if (this.pose.includes("walk")) {
-        console.log("oh no here we are");
+        // console.log("oh no here we are");
         this.animPoses = this.poses.filter((pose) => {
-          console.log("pose?", pose.pose.includes(this.pose));
+          //   console.log("pose?", pose.pose.includes(this.pose));
           return pose.pose.includes(this.pose);
         });
 
-        console.log("this.animPoses mounted", this.animPoses);
+        // console.log("this.animPoses mounted", this.animPoses);
 
         window.clearInterval(this.animating);
 
@@ -223,9 +223,9 @@ export default {
   <div class="sprite-container">
     <img class="sprite" :src="spritesheet" :style="{ top: top, left: left }" />
   </div>
-  <div>
+  <!-- <div>
     {{ animStep }}
-  </div>
+  </div> -->
   <!-- <div
     class="sprite"
     :style="{
