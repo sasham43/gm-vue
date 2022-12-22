@@ -1,6 +1,7 @@
 <script>
 import TileMap from "./TileMap.vue";
 import Actor from "./Actor.vue";
+import Sprite from "./Sprite.vue";
 import {
   isHighlightedAttack,
   findDistance,
@@ -418,7 +419,7 @@ export default {
       return this.watchCurrentTurn(newValue, oldValue);
     },
   },
-  components: { TileMap, Actor },
+  components: { TileMap, Actor, Sprite },
 };
 </script>
 
@@ -437,6 +438,8 @@ export default {
     ></TileMap>
     <Actor v-bind="player" :tiles="tiles"></Actor>
     <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
+    <Sprite pose="standing" spritesheet="src/assets/hero-1.png"></Sprite>
+    <Sprite pose="w-walk" spritesheet="src/assets/hero-1.png"></Sprite>
   </div>
   <div>
     <button @click="previousTurn()">&lt; turn</button>
