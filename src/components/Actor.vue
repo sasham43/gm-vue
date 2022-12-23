@@ -24,6 +24,7 @@ export default {
       tileBorderBase: 2,
       tileMarginBase: 4,
       isTakingDamage: false,
+      isHealing: false,
     };
   },
   computed: {
@@ -77,12 +78,27 @@ export default {
   watch: {
     health(newValue, oldValue){
       if(newValue < oldValue){
-        let damageDuration = 1000;
+        let damageDuration = 400;
+        this.damageTaken = oldValue - newValue;
         this.isTakingDamage = true;
 
         window.setTimeout(() => {
           this.isTakingDamage = false;
+          this.damageTaken = 0;
         }, damageDuration)
+        // Add damage shake
+        // add healing
+        // add little pop up that shows the damage
+        // change the transition to have damage effect be faster
+      } else if (newValue > oldValue){
+        let healDuration = 1000;
+        this.healAmount = newValue - oldValue
+        this.isHealing = true;
+
+        window.setTimeout(() => {
+          this.isHealing = false;
+          this.healAmount = 0;
+        }, healDuration)
       }
     }
   },
@@ -94,9 +110,18 @@ export default {
 <template>
   <div
     :style="{ top: top, left: left }"
-    :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage }"
+    :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage, 'healing': isHealing }"
     class="actor"
   >
+  <div class="health-change" :class="{'damage-info': isTakingDamage, 'healing-info': isHealing}">
+    <span v-if="isTakingDamage">
+      -{{ damageTaken }}
+      <!-- -4 -->
+    </span>
+    <span v-if="isHealing">
+      +{{ healAmount }}
+    </span>
+  </div>
     <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
     <!-- <span>{{ currentHeight }}</span> -->
   </div>
@@ -113,7 +138,7 @@ export default {
 
   position: absolute;
   pointer-events: none;
-  transition: 1s all;
+  transition: 1s top, 1s left, .4s filter;
   transform: scale(1.5);
 
   /* isometric */
@@ -125,12 +150,33 @@ export default {
   /* filter: hue-rotate(49deg) saturate(2); */
   filter: sepia() saturate(10000%) hue-rotate(40deg)
 }
+.healing {
+  /* filter: hue-rotate(49deg) saturate(2); */
+  filter: sepia() saturate(10000%) hue-rotate(140deg)
+}
+
+.damage.sprite-container {
+  transform: translate(100px)
+}
 
 .enemy {
   /* border: solid 1px red;
   background-color: brown; */
 }
 
+.health-change {
+  font-size: 6px;
+  position: absolute;
+  top: -10px;
+  left: 6px
+}
+
+.health-change.damage-info {
+  color: orangered;
+}
+.health-change.healing-info {
+  color: darkturquoise;
+}
 .dead {
   /* background-color: black; */
   filter: grayscale(100%);
