@@ -9,8 +9,12 @@ export default {
     currentActor: Object,
     mode: String,
     tile: Number, // for now...
+    height: Number,
   },
   computed: {
+    translate(){
+      return `translate(${this.height * 50}px ${this.height * 50}px)`
+    },
     playerX() {
       return this.player.x;
       // return this.player?.pos.split(",")[0];
@@ -60,7 +64,24 @@ export default {
     isHighlightedAttack() {
       return this.isHighlightedMeleeAttack || this.isHighlightedRangedAttack;
     },
+    leftTranslate(){
+      if(this.height == 1){
+        return '17.5'
+      } else if (this.height == 2){
+        return '67'
+      }
+    },
+    rightTranslate(){
+      if (this.height == 1) {
+        return 'translate(14px, -77px)'
+      } else if (this.height == 2){
+        return 'translate(-38px, -128px)'
+      }
+    },
   },
+  mounted(){
+    console.log("height", this.height)
+  }
 };
 </script>
 
@@ -74,9 +95,14 @@ export default {
       'highlighted-move-tile': isHighlightedMove,
       'highlighted-attack-tile': isHighlightedAttack,
     }"
+    :style="{ 'transform': `translate(-${height * 50}px, -${height * 50}px)` }"
   >
     <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
+    <!-- <span>{{ `translate(${height * 50}px ${height * 50}px)` }}</span> -->
   </div>
+  <div v-if="height > 0" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)` }"></div>
+  <div v-if="height > 0" class="right-side-tile"
+    :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)` }"></div>
 </template>
 
 <style scoped>
@@ -90,6 +116,19 @@ export default {
   border-style: solid;
   border-color: rgba(0, 0, 0, 0);
 }
+.right-side-tile,
+.left-side-tile {
+    width: 50px;
+    height: 50px;
+    background-color: green;
+    /* transform: translate(-67px, -100px) skew(44deg, 0deg); */
+    position: absolute;
+}
+/* .right-side-tile {
+  background-color: red;
+
+    transform: translate(-38px, -127px) skew(0deg, 45deg);
+} */
 .empty-tile {
   background-color: black;
 }

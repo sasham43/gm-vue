@@ -4,6 +4,7 @@ import { isHighlightedMove } from "../utils/highlight";
 export default {
   props: {
     tiles: Array,
+    heightMap: Array,
     player: Object,
     currentActor: Object,
     mode: String,
@@ -55,6 +56,7 @@ export default {
           :player="player"
           :currentActor="currentActor"
           :mode="mode"
+          :height="heightMap[rowIndex][colIndex]"
         ></Tile>
       </div>
     </div>

@@ -15,6 +15,20 @@ export default {
   data() {
     return {
       currentTurn: 0,
+      heightMap: [
+        [2, 1, 1, 0, 0],
+        [1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+      ],
+      // heightMap: [
+      //   [4, 4, 3, 3, 2],
+      //   [3, 1, 0, 2, 2],
+      //   [2, 1, 0, 1, 0],
+      //   [1, 0, 0, 0, 0],
+      //   [0, 0, 0, 0, 0],
+      // ],
       tiles: [
         [1, 1, 1, 1, 1],
         [1, 1, 0, 1, 1],
@@ -526,6 +540,7 @@ export default {
         :currentActor="currentActor"
         :tiles="tiles"
         :mode="mode"
+        :heightMap="heightMap"
       ></TileMap>
       <Actor v-bind="player" :tiles="tiles"></Actor>
       <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
