@@ -540,10 +540,10 @@ export default {
         :currentActor="currentActor"
         :tiles="tiles"
         :mode="mode"
-        :heightMap="heightMap"
+        :heightMap="heightMap" 
       ></TileMap>
-      <Actor v-bind="player" :tiles="tiles"></Actor>
-      <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy"></Actor>
+      <Actor v-bind="player" :tiles="tiles" :heightMap="heightMap"></Actor>
+      <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy" :heightMap="heightMap"></Actor>
     </div>
   </div>
   <div class="attack-view-container">

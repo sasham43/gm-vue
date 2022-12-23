@@ -80,29 +80,31 @@ export default {
     },
   },
   mounted(){
-    console.log("height", this.height)
+    // console.log("height", this.height)
   }
 };
 </script>
 
 <template>
-  <div
-    class="tile"
-    :class="{
-      'empty-tile': tile === 0,
-      'filled-tile': tile === 1,
-      'enemy': currentActor.enemy,
-      'highlighted-move-tile': isHighlightedMove,
-      'highlighted-attack-tile': isHighlightedAttack,
-    }"
-    :style="{ 'transform': `translate(-${height * 50}px, -${height * 50}px)` }"
-  >
-    <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
-    <!-- <span>{{ `translate(${height * 50}px ${height * 50}px)` }}</span> -->
+  <div>
+    <div
+      class="tile"
+      :class="{
+        'empty-tile': tile === 0,
+        'filled-tile': tile === 1,
+        'enemy': currentActor.enemy,
+        'highlighted-move-tile': isHighlightedMove,
+        'highlighted-attack-tile': isHighlightedAttack,
+      }"
+      :style="{ 'transform': `translate(-${height * 50}px, -${height * 50}px)` }"
+    >
+      <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
+      <!-- <span>{{ `translate(${height * 50}px ${height * 50}px)` }}</span> -->
+    </div>
+    <div v-if="height > 0" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)` }"></div>
+    <div v-if="height > 0" class="right-side-tile"
+      :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)` }"></div>
   </div>
-  <div v-if="height > 0" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)` }"></div>
-  <div v-if="height > 0" class="right-side-tile"
-    :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)` }"></div>
 </template>
 
 <style scoped>

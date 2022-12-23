@@ -15,6 +15,7 @@ export default {
       type: String,
       default: "standing",
     },
+    heightMap: Array,
   },
   data() {
     return {
@@ -51,12 +52,12 @@ export default {
     },
     left() {
       return `${
-        (this.tileWidth + this.tileMargin + this.tileBorder) * this.xPos
+        ((this.tileWidth + this.tileMargin + this.tileBorder) * this.xPos) - (this.currentHeight * 50)
       }px`;
     },
     top() {
       return `${
-        (this.tileHeight + this.tileMargin + this.tileBorder) * this.yPos
+        ((this.tileHeight + this.tileMargin + this.tileBorder) * this.yPos) - (this.currentHeight * 50)
       }px`;
     },
     pose(){
@@ -66,6 +67,12 @@ export default {
         return this.spritePose;
       }
     },
+    currentHeight(){
+      return this.heightMap[this.y][this.x]
+    },
+    heightTransform(){
+      return `translate(-${this.currentHeight * 50}px, -${this.currentHeight * 50}px)`
+    }
   },
   watch: {
     health(newValue, oldValue){
@@ -91,6 +98,7 @@ export default {
     class="actor"
   >
     <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
+    <!-- <span>{{ currentHeight }}</span> -->
   </div>
 </template>
 

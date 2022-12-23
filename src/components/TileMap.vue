@@ -9,6 +9,7 @@ export default {
     currentActor: Object,
     mode: String,
   },
+  emits:['tileSelect'],
   computed: {
     playerX() {
       return this.player.x;
