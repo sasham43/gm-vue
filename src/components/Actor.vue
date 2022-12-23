@@ -113,7 +113,7 @@ export default {
 
   position: absolute;
   pointer-events: none;
-  transition: 0.2s all;
+  transition: 1s all;
   transform: scale(1.5);
 
   /* isometric */

@@ -99,7 +99,7 @@ export default {
         },
       ],
       animStep: 0,
-      animSpeed: 300,
+      animSpeed: 250,
       animating: null,
       animPosition: "",
     };

@@ -286,7 +286,7 @@ export default {
           actor.x,
           actor.y
         );
-        // console.log("is attackable", isAttackable);
+        console.log("is attackable", isAttackable);
         if (!isAttackable) {
           // console.log("too far, moving");
           if (this.currentActorMoved) {
@@ -300,11 +300,12 @@ export default {
             });
           }
         } else {
+          console.log('should enemy melee attack?')
           // attack
           if (this.currentActorAttacked) {
             this.nextTurn();
           } else {
-            // console.log("melee attack");
+            console.log("melee attack");
             this.enemyChoice(() => {
               this.player.health -= actor.meleePower;
               // console.log("player health:", this.player.health);
@@ -392,7 +393,7 @@ export default {
         } else {
           step += 1;
         }
-      }, 300);
+      }, 300); // .8s
     },
     findShortestPath(list) {
       let sorted = _.sortBy(list, "distanceFromStart").reverse();
@@ -617,6 +618,7 @@ export default {
 }
 .attack-view-container>div {
   flex-grow: 1;
+  width: 50%;
 }
 .attack-view-sprite-container {
     transform: scale(500%);
