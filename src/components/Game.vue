@@ -7,6 +7,7 @@ import {
   findDistance,
   isHighlightedMove,
 } from "../utils/highlight";
+import {pathfinding} from '../utils/movement'
 import rollDice from "../utils/dice";
 
 import _ from "lodash";
@@ -188,7 +189,7 @@ export default {
       });
     },
     movePlayer(x, y) {
-      let result = this.pathfinding(this.player, { x, y });
+      let result = pathfinding(this.tiles, this.player, { x, y });
 
       this.moveAlongPath(this.player, result, this.player.speed);
     },
@@ -326,47 +327,47 @@ export default {
         action();
       }, enemyDecisionSpeed);
     },
-    findNeighboringTiles(actor) {
-      let neighbors = [];
+    // findNeighboringTiles(actor) {
+    //   let neighbors = [];
 
-      if (this.tiles[actor.y][actor.x + 1]) {
-        neighbors.push({
-          x: actor.x + 1,
-          y: actor.y,
-        });
-      }
-      if (this.tiles[actor.y][actor.x - 1]) {
-        neighbors.push({
-          x: actor.x - 1,
-          y: actor.y,
-        });
-      }
-      if (
-        this.tiles[actor.y + 1] != undefined &&
-        this.tiles[actor.y + 1][actor.x]
-      ) {
-        neighbors.push({
-          x: actor.x,
-          y: actor.y + 1,
-        });
-      }
-      if (
-        this.tiles[actor.y - 1] != undefined &&
-        this.tiles[actor.y - 1][actor.x]
-      ) {
-        neighbors.push({
-          x: actor.x,
-          y: actor.y - 1,
-        });
-      }
+    //   if (this.tiles[actor.y][actor.x + 1]) {
+    //     neighbors.push({
+    //       x: actor.x + 1,
+    //       y: actor.y,
+    //     });
+    //   }
+    //   if (this.tiles[actor.y][actor.x - 1]) {
+    //     neighbors.push({
+    //       x: actor.x - 1,
+    //       y: actor.y,
+    //     });
+    //   }
+    //   if (
+    //     this.tiles[actor.y + 1] != undefined &&
+    //     this.tiles[actor.y + 1][actor.x]
+    //   ) {
+    //     neighbors.push({
+    //       x: actor.x,
+    //       y: actor.y + 1,
+    //     });
+    //   }
+    //   if (
+    //     this.tiles[actor.y - 1] != undefined &&
+    //     this.tiles[actor.y - 1][actor.x]
+    //   ) {
+    //     neighbors.push({
+    //       x: actor.x,
+    //       y: actor.y - 1,
+    //     });
+    //   }
 
-      return neighbors;
-    },
-    chooseLowestTotalScore(a, b) {
-      if (a.totalScore > b.totalScore) return 1;
-      if (a.totalScore < b.totalScore) return -1;
-      return 0;
-    },
+    //   return neighbors;
+    // },
+    // chooseLowestTotalScore(a, b) {
+    //   if (a.totalScore > b.totalScore) return 1;
+    //   if (a.totalScore < b.totalScore) return -1;
+    //   return 0;
+    // },
     moveAlongPath(actor, path, range) {
       let step = 0;
 
@@ -395,88 +396,88 @@ export default {
         }
       }, 300); // .8s
     },
-    findShortestPath(list) {
-      let sorted = _.sortBy(list, "distanceFromStart").reverse();
-      let start = sorted.shift();
-      let path = this.findNextPathStep(start, [], list);
-      return path;
-    },
-    findNextPathStep(start, pathList, closedList) {
-      let nextSteps = closedList.filter((tile) => {
-        return tile.distanceFromStart == start.distanceFromStart - 1;
-      });
+    // findShortestPath(list) {
+    //   let sorted = _.sortBy(list, "distanceFromStart").reverse();
+    //   let start = sorted.shift();
+    //   let path = this.findNextPathStep(start, [], list);
+    //   return path;
+    // },
+    // findNextPathStep(start, pathList, closedList) {
+    //   let nextSteps = closedList.filter((tile) => {
+    //     return tile.distanceFromStart == start.distanceFromStart - 1;
+    //   });
 
-      let next = nextSteps.find((step) => {
-        let distance = findDistance(start.x, start.y, step.x, step.y).total;
-        return distance === 1;
-      });
+    //   let next = nextSteps.find((step) => {
+    //     let distance = findDistance(start.x, start.y, step.x, step.y).total;
+    //     return distance === 1;
+    //   });
 
-      pathList.push(start);
-      if (next.distanceFromStart === 0) {
-        return pathList;
-      } else {
-        return this.findNextPathStep(next, pathList, closedList);
-      }
-    },
-    pathfinding(start, target, openList = [], closedList = [], loopNumber = 0) {
-      // make sure compatible values are set
-      start.pos = `${start.x},${start.y}`;
-      start.distanceFromStart =
-        start.distanceFromStart == undefined ? 0 : start.distanceFromStart;
-      target.pos = `${target.x},${target.y}`;
-      // get tiles N, E, S, W of actor, push to array
-      let neighboringTiles = this.findNeighboringTiles(start);
-      // loop through array, calculate distance from each tile towards player (as total x + total y)
-      // if there are unnavigable tiles in the 'count', disregard or weight distance differently
-      neighboringTiles = neighboringTiles.map((tile) => {
-        let distanceToTarget = findDistance(
-          tile.x,
-          tile.y,
-          target.x,
-          target.y
-        ).total;
+    //   pathList.push(start);
+    //   if (next.distanceFromStart === 0) {
+    //     return pathList;
+    //   } else {
+    //     return this.findNextPathStep(next, pathList, closedList);
+    //   }
+    // },
+    // pathfinding(start, target, openList = [], closedList = [], loopNumber = 0) {
+    //   // make sure compatible values are set
+    //   start.pos = `${start.x},${start.y}`;
+    //   start.distanceFromStart =
+    //     start.distanceFromStart == undefined ? 0 : start.distanceFromStart;
+    //   target.pos = `${target.x},${target.y}`;
+    //   // get tiles N, E, S, W of actor, push to array
+    //   let neighboringTiles = this.findNeighboringTiles(start);
+    //   // loop through array, calculate distance from each tile towards player (as total x + total y)
+    //   // if there are unnavigable tiles in the 'count', disregard or weight distance differently
+    //   neighboringTiles = neighboringTiles.map((tile) => {
+    //     let distanceToTarget = findDistance(
+    //       tile.x,
+    //       tile.y,
+    //       target.x,
+    //       target.y
+    //     ).total;
 
-        return {
-          pos: `${tile.x},${tile.y}`,
-          ...tile,
-          distanceToTarget,
-          distanceFromStart: start.distanceFromStart + 1,
-        };
-      });
+    //     return {
+    //       pos: `${tile.x},${tile.y}`,
+    //       ...tile,
+    //       distanceToTarget,
+    //       distanceFromStart: start.distanceFromStart + 1,
+    //     };
+    //   });
 
-      // A* pathfinding
-      // openList will be all available 'first moves' from a given origin (starting with actor starting point)
-      openList = _.uniqBy([...openList, ...neighboringTiles], "pos");
-      closedList = _.uniqBy([...closedList, start], "pos");
+    //   // A* pathfinding
+    //   // openList will be all available 'first moves' from a given origin (starting with actor starting point)
+    //   openList = _.uniqBy([...openList, ...neighboringTiles], "pos");
+    //   closedList = _.uniqBy([...closedList, start], "pos");
 
-      // after tiles have been added to openList, calculate F as G + H (G = cost of moving into tile, distance from start; H = simple distance from target, e.g. playerDistance)
-      openList = openList.map((tile) => {
-        let totalScore = tile.distanceFromStart + tile.distanceToTarget;
-        return {
-          ...tile,
-          totalScore,
-        };
-      });
-      openList.sort(this.chooseLowestTotalScore);
+    //   // after tiles have been added to openList, calculate F as G + H (G = cost of moving into tile, distance from start; H = simple distance from target, e.g. playerDistance)
+    //   openList = openList.map((tile) => {
+    //     let totalScore = tile.distanceFromStart + tile.distanceToTarget;
+    //     return {
+    //       ...tile,
+    //       totalScore,
+    //     };
+    //   });
+    //   openList.sort(this.chooseLowestTotalScore);
 
-      // choose  tile from openList lowest F score, add to closedList, retrieve adjacent squares from it
-      let nextTile = openList.shift();
+    //   // choose  tile from openList lowest F score, add to closedList, retrieve adjacent squares from it
+    //   let nextTile = openList.shift();
 
-      // check if tile contains target
-      if (nextTile.x == target.x && nextTile.y == target.y) {
-        return this.findShortestPath([...closedList, nextTile]).reverse();
-      } else {
-        return this.pathfinding(
-          nextTile,
-          target,
-          openList,
-          closedList,
-          loopNumber + 1
-        );
-      }
-    },
+    //   // check if tile contains target
+    //   if (nextTile.x == target.x && nextTile.y == target.y) {
+    //     return this.findShortestPath([...closedList, nextTile]).reverse();
+    //   } else {
+    //     return this.pathfinding(
+    //       nextTile,
+    //       target,
+    //       openList,
+    //       closedList,
+    //       loopNumber + 1
+    //     );
+    //   }
+    // },
     moveTowardsPlayer(actor) {
-      let result = this.pathfinding(actor, this.player);
+      let result = pathfinding(this.tiles, actor, this.player);
       // console.log("path lenght", result.length);
       // remove last piece of route because we don't want to move ontop of player
       result.pop();
