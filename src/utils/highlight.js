@@ -44,6 +44,8 @@ export function isHighlightedAttack(
       xClose = Math.abs(originX - tileX);
     }
 
+    console.log('melee distance', xClose, yClose)
+
     if (xClose == 1 && yClose == 0) {
       return true;
     } else if (yClose == 1 && xClose == 0) {

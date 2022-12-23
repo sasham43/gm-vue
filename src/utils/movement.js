@@ -65,7 +65,7 @@ export function pathfinding(tiles=[],start, target, openList = [], closedList = 
 export function findNeighboringTiles(actor, tiles) {
     let neighbors = [];
 
-    console.log('y tho', tiles, actor)
+    // console.log('y tho', tiles, actor)
 
     if (tiles[actor.y][actor.x + 1]) {
     neighbors.push({

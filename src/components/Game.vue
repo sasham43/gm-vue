@@ -90,6 +90,8 @@ export default {
       enemyChoiceTimeout: null,
       currentDefender: {},
       showAttackInfo: false,
+      showEndScreen: false,
+      endResult: '',
     };
   },
   computed: {
@@ -110,6 +112,8 @@ export default {
 
       this.currentActorAttacked = false;
       this.currentActorMoved = false;
+
+      console.log('nextTurn',this.currentTurn, this.turnOrder.length - 1)
 
       if (this.currentTurn === this.turnOrder.length - 1) {
         this.currentTurn = 0;
@@ -225,6 +229,7 @@ export default {
       //   console.log('current actor health 0', currentActor)
       //   this.nextTurn();
       // }
+      console.log('watch current turn', newValue)
 
       this.currentActor = currentActor;
       this.currentDefender = {}
@@ -240,6 +245,7 @@ export default {
       }
     },
     enemyTurn(actor) {
+      if(this.showEndScreen) return;
       this.currentDefender = this.player;
       // check if can attack player
       if (actor.attack == "ranged") {
@@ -255,7 +261,8 @@ export default {
         if (!isAttackable) {
           // console.log("too far, moving");
           if (this.currentActorMoved) {
-            this.nextTurn();
+            // this.nextTurn();
+            this.currentActorAttacked = true; // attack is impossible
           } else {
             this.setMode('enemy-move')
             this.enemyChoice(() => {
@@ -267,7 +274,8 @@ export default {
         } else {
           // attack
           if (this.currentActorAttacked) {
-            this.nextTurn();
+            // this.nextTurn();
+            this.currentActorMoved = true;
           } else {
             // console.log("ranged attack");
             this.enemyChoice(() => {
@@ -291,7 +299,8 @@ export default {
         if (!isAttackable) {
           // console.log("too far, moving");
           if (this.currentActorMoved) {
-            this.nextTurn();
+            // this.nextTurn();
+            this.currentActorAttacked = true; // attack is impossible
           } else {
             this.setMode('enemy-move')
             this.enemyChoice(() => {
@@ -304,7 +313,8 @@ export default {
           console.log('should enemy melee attack?')
           // attack
           if (this.currentActorAttacked) {
-            this.nextTurn();
+            // this.nextTurn();
+            this.currentActorMoved = true;
           } else {
             console.log("melee attack");
             this.enemyChoice(() => {
@@ -327,47 +337,6 @@ export default {
         action();
       }, enemyDecisionSpeed);
     },
-    // findNeighboringTiles(actor) {
-    //   let neighbors = [];
-
-    //   if (this.tiles[actor.y][actor.x + 1]) {
-    //     neighbors.push({
-    //       x: actor.x + 1,
-    //       y: actor.y,
-    //     });
-    //   }
-    //   if (this.tiles[actor.y][actor.x - 1]) {
-    //     neighbors.push({
-    //       x: actor.x - 1,
-    //       y: actor.y,
-    //     });
-    //   }
-    //   if (
-    //     this.tiles[actor.y + 1] != undefined &&
-    //     this.tiles[actor.y + 1][actor.x]
-    //   ) {
-    //     neighbors.push({
-    //       x: actor.x,
-    //       y: actor.y + 1,
-    //     });
-    //   }
-    //   if (
-    //     this.tiles[actor.y - 1] != undefined &&
-    //     this.tiles[actor.y - 1][actor.x]
-    //   ) {
-    //     neighbors.push({
-    //       x: actor.x,
-    //       y: actor.y - 1,
-    //     });
-    //   }
-
-    //   return neighbors;
-    // },
-    // chooseLowestTotalScore(a, b) {
-    //   if (a.totalScore > b.totalScore) return 1;
-    //   if (a.totalScore < b.totalScore) return -1;
-    //   return 0;
-    // },
     moveAlongPath(actor, path, range) {
       let step = 0;
 
@@ -396,86 +365,6 @@ export default {
         }
       }, 300); // .8s
     },
-    // findShortestPath(list) {
-    //   let sorted = _.sortBy(list, "distanceFromStart").reverse();
-    //   let start = sorted.shift();
-    //   let path = this.findNextPathStep(start, [], list);
-    //   return path;
-    // },
-    // findNextPathStep(start, pathList, closedList) {
-    //   let nextSteps = closedList.filter((tile) => {
-    //     return tile.distanceFromStart == start.distanceFromStart - 1;
-    //   });
-
-    //   let next = nextSteps.find((step) => {
-    //     let distance = findDistance(start.x, start.y, step.x, step.y).total;
-    //     return distance === 1;
-    //   });
-
-    //   pathList.push(start);
-    //   if (next.distanceFromStart === 0) {
-    //     return pathList;
-    //   } else {
-    //     return this.findNextPathStep(next, pathList, closedList);
-    //   }
-    // },
-    // pathfinding(start, target, openList = [], closedList = [], loopNumber = 0) {
-    //   // make sure compatible values are set
-    //   start.pos = `${start.x},${start.y}`;
-    //   start.distanceFromStart =
-    //     start.distanceFromStart == undefined ? 0 : start.distanceFromStart;
-    //   target.pos = `${target.x},${target.y}`;
-    //   // get tiles N, E, S, W of actor, push to array
-    //   let neighboringTiles = this.findNeighboringTiles(start);
-    //   // loop through array, calculate distance from each tile towards player (as total x + total y)
-    //   // if there are unnavigable tiles in the 'count', disregard or weight distance differently
-    //   neighboringTiles = neighboringTiles.map((tile) => {
-    //     let distanceToTarget = findDistance(
-    //       tile.x,
-    //       tile.y,
-    //       target.x,
-    //       target.y
-    //     ).total;
-
-    //     return {
-    //       pos: `${tile.x},${tile.y}`,
-    //       ...tile,
-    //       distanceToTarget,
-    //       distanceFromStart: start.distanceFromStart + 1,
-    //     };
-    //   });
-
-    //   // A* pathfinding
-    //   // openList will be all available 'first moves' from a given origin (starting with actor starting point)
-    //   openList = _.uniqBy([...openList, ...neighboringTiles], "pos");
-    //   closedList = _.uniqBy([...closedList, start], "pos");
-
-    //   // after tiles have been added to openList, calculate F as G + H (G = cost of moving into tile, distance from start; H = simple distance from target, e.g. playerDistance)
-    //   openList = openList.map((tile) => {
-    //     let totalScore = tile.distanceFromStart + tile.distanceToTarget;
-    //     return {
-    //       ...tile,
-    //       totalScore,
-    //     };
-    //   });
-    //   openList.sort(this.chooseLowestTotalScore);
-
-    //   // choose  tile from openList lowest F score, add to closedList, retrieve adjacent squares from it
-    //   let nextTile = openList.shift();
-
-    //   // check if tile contains target
-    //   if (nextTile.x == target.x && nextTile.y == target.y) {
-    //     return this.findShortestPath([...closedList, nextTile]).reverse();
-    //   } else {
-    //     return this.pathfinding(
-    //       nextTile,
-    //       target,
-    //       openList,
-    //       closedList,
-    //       loopNumber + 1
-    //     );
-    //   }
-    // },
     moveTowardsPlayer(actor) {
       let result = pathfinding(this.tiles, actor, this.player);
       // console.log("path lenght", result.length);
@@ -488,6 +377,7 @@ export default {
     },
     watchCurrentActorActions() {
       if (this.currentActorAttacked && this.currentActorMoved) {
+        console.log('current actor finished, next turn')
         this.nextTurn();
       }
     },
@@ -496,9 +386,36 @@ export default {
       this.showAttackInfo = true;
     },
     filterDead(){
+      console.log('filtering dead')
       this.turnOrder = this.turnOrder.filter(actor => {
         return actor.health > 0;
       })
+
+      let livingPlayers = this.turnOrder.filter(actor => {
+        return actor.player
+      })
+      let livingEnemies = this.turnOrder.filter(actor => {
+        return actor.enemy
+      })
+
+      if(livingEnemies.length == 0){
+        this.endBattle('victory')
+      } else if (livingPlayers.length == 0){
+        this.endBattle('defeat')
+      }
+    },
+    endBattle(result){
+      this.showEndScreen = true;
+      this.endResult = result;
+      // if(this.turnOrder[0].player){
+      //   this.endResult = 'victory'
+      // } else {
+      //   this.endResult = 'defeat'
+      // }
+    },
+    hideEndScreen(){
+      this.showEndScreen = false;
+      this.endResult = '';
     }
   },
   watch: {
@@ -506,12 +423,13 @@ export default {
       return this.watchCurrentTurn(newValue, oldValue);
     },
     currentActorAttacked() {
-      this.watchCurrentActorActions();
       this.filterDead()
+      this.watchCurrentActorActions();
     },
     currentActorMoved() {
-      return this.watchCurrentActorActions();
-    },
+      this.filterDead()
+      this.watchCurrentActorActions();
+    }
   },
   components: { TileMap, Actor, Sprite },
 };
@@ -553,6 +471,9 @@ export default {
       <div>
         Attacker: {{ currentActor.name }}
       </div>
+      <div>
+        HP: {{ currentActor.health }} / {{ currentActor.healthMax }}
+      </div>
       <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
         Power: {{ currentActor.attackPower }}
       </div>
@@ -569,8 +490,8 @@ export default {
       <div>
         Defender: {{ currentDefender.name }}
       </div>
-      <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
-        Health: {{ currentDefender.health }}
+      <div>
+        HP: {{ currentDefender.health }} / {{ currentDefender.healthMax }}
       </div>
 
       <div>
@@ -580,6 +501,15 @@ export default {
       </div>
       <div class="attack-view-sprite-container">
         <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
+      </div>
+    </div>
+
+    <div @click="hideEndScreen()" v-if="showEndScreen" class="end-screen" :style="{'border-color': endResult == 'victory' ? 'turquoise' : 'gold'}">
+      <div v-if="endResult == 'victory'" class="victory">
+        Victory!
+      </div>
+      <div v-else-if="endResult == 'defeat'" class="defeat">
+        Defeat...
       </div>
     </div>
   </div>
@@ -649,5 +579,44 @@ button {
 }
 .player-view .attack-button {
   opacity: 1;
+}
+
+.end-screen {
+  /* width: 75vw;
+  height: 75vw; */
+  position: absolute;
+  inset: 25vw 25vh;
+  background-color: black;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 42px;
+  font-weight: 700;
+  border-style: solid;
+  border-width: 5px;
+  cursor: pointer;
+  /* border: solid 5px turquoise; */
+}
+
+.victory,
+.defeat {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.victory {
+  background-color: aquamarine;
+  color: black;
+}
+
+.defeat {
+  background-color: orangered;
+  border: gold;
+
 }
 </style>
