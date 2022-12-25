@@ -10,6 +10,7 @@ export default {
     mode: String,
     tile: Number, // for now...
     height: Number,
+    highlightedMoveTiles: Array,
   },
   computed: {
     translate(){
@@ -26,19 +27,28 @@ export default {
     },
     isHighlightedMove() {
       if (this.mode != "player-move" && this.mode != 'enemy-move') return false;
-      // console.log("player mode", this.mode);
 
-      return isHighlightedMove(
-        this.tile,
-        this.y,
-        this.x,
-        this.currentActor.x,
-        this.currentActor.y,
-        this.currentActor.speed
-        // this.playerX,
-        // this.playerY,
-        // this.player.speed
-      );
+      let isHighlighted = this.highlightedMoveTiles.find(tile => {
+        return tile.x === this.x && tile.y === this.y;
+      })
+      // console.log('is hhh', isHighlighted, this.x, this.y, this.highlightedMoveTiles)
+
+      return isHighlighted;
+
+
+      // // console.log("player mode", this.mode);
+
+      // return isHighlightedMove(
+      //   this.tile,
+      //   this.y,
+      //   this.x,
+      //   this.currentActor.x,
+      //   this.currentActor.y,
+      //   this.currentActor.speed
+      //   // this.playerX,
+      //   // this.playerY,
+      //   // this.player.speed
+      // );
     },
     isHighlightedRangedAttack() {
       if (this.mode != "ranged") return false;

@@ -7,7 +7,7 @@ import {
   findDistance,
   isHighlightedMove,
 } from "../utils/highlight";
-import {pathfinding} from '../utils/movement'
+import { pathfinding, highlightMovementTiles } from '../utils/movement'
 import rollDice, {findModifier} from "../utils/dice";
 
 import _ from "lodash";
@@ -158,6 +158,7 @@ export default {
         y: 0,
       },
       showAbilities: false,
+      highlightedMoveTiles: []
     };
   },
   computed: {
@@ -312,7 +313,7 @@ export default {
       //   console.log('current actor health 0', currentActor)
       //   this.nextTurn();
       // }
-      console.log('watch current turn', newValue)
+      // console.log('watch current turn', newValue)
 
       this.currentActor = currentActor;
       this.currentDefender = {}
@@ -324,11 +325,16 @@ export default {
       } else {
         // AI actions
         console.log("enemy turn");
+        currentActor.distanceFromStart = 0;
         this.enemyTurn(currentActor);
       }
+      this.highlightedMoveTiles = highlightMovementTiles(this.tiles, currentActor, this.player.speed)
+      console.log('we can move onto these', this.highlightedMoveTiles)
+
+
     },
     enemyTurn(actor) {
-      console.log('jjjj', this.showEndScreen)
+      // console.log('jjjj', this.showEndScreen)
       if(this.showEndScreen) return;
       this.currentDefender = this.player;
       let attack = actor.attacks[0]
@@ -386,7 +392,7 @@ export default {
           actor.x,
           actor.y
         );
-        console.log("is attackable", isAttackable);
+        // console.log("is attackable", isAttackable);
         if (!isAttackable) {
           // console.log("too far, moving");
           if (this.currentActorMoved) {
@@ -401,13 +407,13 @@ export default {
             });
           }
         } else {
-          console.log('should enemy melee attack?')
+          // console.log('should enemy melee attack?')
           // attack
           if (this.currentActorAttacked) {
             // this.nextTurn();
             this.currentActorMoved = true;
           } else {
-            console.log("melee attack");
+            // console.log("melee attack");
             this.enemyChoice(() => {
               this.performAttack(actor, this.player)
               // this.player.health -= actor.meleePower;
@@ -437,14 +443,14 @@ export default {
       let attackRoll = rollDice('1d20', modifier)
       if(attackRoll.total >= defender.ac){
         let damage = rollDice(attack.damage, modifier)
-        console.log('hit!', damage)
+        // console.log('hit!', damage)
 
         defender.health -= damage.total;
       } else {
-        console.log('miss')
+        // console.log('miss')
         defender.effect = 'miss'
       }
-      console.log('performing attack', stat, modifier, attackRoll)
+      // console.log('performing attack', stat, modifier, attackRoll)
     },
     moveAlongPath(actor, path, range) {
       let step = 0;
@@ -486,7 +492,7 @@ export default {
     },
     watchCurrentActorActions() {
       if (this.currentActorAttacked && this.currentActorMoved) {
-        console.log('current actor finished, next turn')
+        // console.log('current actor finished, next turn')
         this.nextTurn();
       }
     },
@@ -495,9 +501,9 @@ export default {
       this.showAttackInfo = true;
     },
     filterDead(){
-      console.log('filtering dead')
+      // console.log('filtering dead')
       this.turnOrder = this.turnOrder.filter(actor => {
-        console.log('actor health', actor.health)
+        // console.log('actor health', actor.health)
         return actor.health > 0;
       })
       // console.log('filtered dead', JSON.stringify(this.turnOrder))
@@ -509,7 +515,7 @@ export default {
         return actor.enemy
       })
 
-      console.log('living', livingEnemies.length, livingPlayers.length)
+      // console.log('living', livingEnemies.length, livingPlayers.length)
 
       if(livingEnemies.length == 0){
         this.endBattle('victory')
@@ -653,6 +659,7 @@ export default {
         :tiles="tiles"
         :mode="mode"
         :heightMap="heightMap" 
+        :highlightedMoveTiles="highlightedMoveTiles"
       ></TileMap>
       <Actor v-bind="player" :tiles="tiles" :heightMap="heightMap"></Actor>
       <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy" :heightMap="heightMap"></Actor>
