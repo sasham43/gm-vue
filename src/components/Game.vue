@@ -442,6 +442,7 @@ export default {
         defender.health -= damage.total;
       } else {
         console.log('miss')
+        defender.effect = 'miss'
       }
       console.log('performing attack', stat, modifier, attackRoll)
     },

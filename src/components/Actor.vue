@@ -16,6 +16,7 @@ export default {
       default: "standing",
     },
     heightMap: Array,
+    effect: String,
   },
   data() {
     return {
@@ -25,6 +26,7 @@ export default {
       tileMarginBase: 4,
       isTakingDamage: false,
       isHealing: false,
+      actorEffect: '',
     };
   },
   computed: {
@@ -100,6 +102,12 @@ export default {
           this.healAmount = 0;
         }, healDuration)
       }
+    },
+    effect(newValue, oldValue){
+      this.actorEffect = newValue
+      window.setTimeout(() => {
+        this.actorEffect = '';
+      }, 1000)
     }
   },
   components: {
@@ -120,6 +128,9 @@ export default {
     </span>
     <span v-if="isHealing">
       +{{ healAmount }}
+    </span>
+    <span v-if="actorEffect">
+      {{ actorEffect }}
     </span>
   </div>
     <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
