@@ -198,7 +198,7 @@ export default {
 }
 .healing {
   /* filter: hue-rotate(49deg) saturate(2); */
-  filter: sepia() saturate(10000%) hue-rotate(140deg)
+  filter: sepia() saturate(10000%) hue-rotate(240deg)
 }
 
 .damage.sprite-container {

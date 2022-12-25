@@ -60,6 +60,14 @@ export default {
           cha: 10,
         },
         ac: 15,
+        items: [
+          {
+            name: 'health potion',
+            effect: 'heal',
+            amount: '1d4',
+            target: 'self',
+          }
+        ],
         attacks: [
           {
             type: 'melee',
@@ -157,7 +165,8 @@ export default {
         x: 0,
         y: 0,
       },
-      showAbilities: false,
+      // showAbilities: false,
+      showButtons: '',
       highlightedMoveTiles: []
     };
   },
@@ -182,7 +191,13 @@ export default {
       } else {
         return false;
       }
-    }
+    },
+    showAbilities(){
+      return this.showButtons == 'abilities'
+    },
+    showItems(){
+      return this.showButtons == 'items'
+    },
   },
   methods: {
     nextTurn() {
@@ -590,14 +605,38 @@ export default {
       }
     },
     displayAbilities(){
-      this.showAbilities = true;
+      // this.showAbilities = true;
+      this.showButtons = 'abilities'
     },
     hideAbilities(){
-      this.showAbilities = false;
+      // this.showAbilities = false;
+      this.showButtons = ''
+    },
+    displayItems(){
+      // this.showItems = true;
+      this.showButtons = 'items'
+    },
+    hideItems(){
+      // this.showAbilities = false;
+      this.showButtons = ''
     },
     selectAttack(attack){
       this.player.selectedAttack = attack;
       this.mode = attack.type;
+    },
+    selectItem(item){
+      this.player.selectedItem = item;
+      this.mode = item.effect;
+      if(item.target == 'self'){
+        this.currentDefender = this.player
+      }
+    },
+    playerItem(item){
+      if(item.effect == 'heal'){
+        let amount = rollDice(item.amount).total;
+
+        this.player.health += amount;
+      }
     }
   },
   watch: {
@@ -647,10 +686,18 @@ export default {
           {{ attack.name }} - {{ attack.type }}
         </button>
       </div>
+      <div v-if="showItems" class="abilities">
+        <button @click="selectItem(item)" v-for="item in player.items">
+          {{ item.name }} - {{ item.effect }}
+        </button>
+      </div>
       <button @click="displayAbilities()">
         abilities
       </button>
-      {{ mode }}
+      <button @click="displayItems()">
+        items
+      </button>
+      <!-- {{ mode }} -->
       <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
       <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
       <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
@@ -687,6 +734,16 @@ export default {
             </button>
           </div>
         </div>
+        <div v-if="currentActor.selectedItem" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+          <div class="attack-info">
+            {{ currentActor.selectedItem.name }} - {{ currentActor.selectedItem.effect }}
+          </div>
+          <div class="attack-info">
+            <button class="attack-button" @click="playerItem(currentActor.selectedItem)">
+              Use
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="attacker-info-container">
@@ -711,6 +768,9 @@ export default {
         </div>
         <div>
           HP: {{ currentDefender.health }} / {{ currentDefender.healthMax }}
+        </div>
+        <div>
+          AC: {{ currentDefender.ac }}
         </div>
       </div>
 
