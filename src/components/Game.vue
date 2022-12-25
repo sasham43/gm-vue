@@ -8,7 +8,7 @@ import {
   isHighlightedMove,
 } from "../utils/highlight";
 import {pathfinding} from '../utils/movement'
-import rollDice from "../utils/dice";
+import rollDice, {findModifier} from "../utils/dice";
 
 import _ from "lodash";
 
@@ -207,7 +207,8 @@ export default {
       }
     },
     playerAttack(){
-          this.currentDefender.health -= this.player.attackPower;
+          this.performAttack(this.player, this.currentDefender)
+          // this.currentDefender.health -= this.player.attackPower;
           this.currentActorAttacked = true;
     },
     onTileSelect(tile, row, col, isNavigable) {
@@ -256,8 +257,12 @@ export default {
 
         if (isAttackable && enemy) {
           this.currentDefender = enemy;
-          this.player.attackPower = this.player.rangedPower;
+          // this.player.attackPower = this.player.rangedPower;
           this.displayAttackView();
+
+
+          // this.performAttack(this.player, enemy)
+
           // enemy.health -= this.player.rangedPower;
           // this.currentActorAttacked = true;
         }
@@ -327,6 +332,7 @@ export default {
       if(this.showEndScreen) return;
       this.currentDefender = this.player;
       let attack = actor.attacks[0]
+      actor.selectedAttack = attack;
       // check if can attack player
       if (attack.type == "ranged") {
         let isAttackable = isHighlightedAttack(
@@ -359,9 +365,11 @@ export default {
           } else {
             // console.log("ranged attack");
             this.enemyChoice(() => {
-              let damage = rollDice(attack.damage)
-              this.player.health -= damage.total;
-              console.log('damage', damage)
+              // let damage = rollDice(attack.damage)
+              // this.player.health -= damage.total;
+              // console.log('damage', damage)
+
+              this.performAttack(actor, this.player)
               // this.player.health -= actor.rangedPower;
               // console.log("player health:", this.player.health);
               // this.nextTurn();
@@ -401,7 +409,8 @@ export default {
           } else {
             console.log("melee attack");
             this.enemyChoice(() => {
-              this.player.health -= actor.meleePower;
+              this.performAttack(actor, this.player)
+              // this.player.health -= actor.meleePower;
               // console.log("player health:", this.player.health);
               this.currentActorAttacked = true;
               this.enemyTurn(actor);
@@ -419,6 +428,22 @@ export default {
         // console.log("choice");
         action();
       }, enemyDecisionSpeed);
+    },
+    performAttack(attacker, defender){
+      let attack = attacker.selectedAttack;
+      let stat = attacker.stats[attack.stat]
+
+      let modifier = findModifier(stat)
+      let attackRoll = rollDice('1d20', modifier)
+      if(attackRoll.total >= defender.ac){
+        let damage = rollDice(attack.damage, modifier)
+        console.log('hit!', damage)
+
+        defender.health -= damage.total;
+      } else {
+        console.log('miss')
+      }
+      console.log('performing attack', stat, modifier, attackRoll)
     },
     moveAlongPath(actor, path, range) {
       let step = 0;
@@ -474,6 +499,7 @@ export default {
         console.log('actor health', actor.health)
         return actor.health > 0;
       })
+      // console.log('filtered dead', JSON.stringify(this.turnOrder))
 
       let livingPlayers = this.turnOrder.filter(actor => {
         return actor.player
@@ -481,6 +507,8 @@ export default {
       let livingEnemies = this.turnOrder.filter(actor => {
         return actor.enemy
       })
+
+      console.log('living', livingEnemies.length, livingPlayers.length)
 
       if(livingEnemies.length == 0){
         this.endBattle('victory')
@@ -500,6 +528,7 @@ export default {
     hideEndScreen(){
       this.showEndScreen = false;
       this.endResult = '';
+      this.turnOrder = []
     },
     onMouseDown(event){
       // console.log('on mouse down', document.body.classList)
@@ -561,6 +590,7 @@ export default {
     },
     selectAttack(attack){
       this.player.selectedAttack = attack;
+      this.mode = attack.type;
     }
   },
   watch: {
@@ -681,14 +711,16 @@ export default {
         </button>
       </div> -->
     </div>
+    
+  </div>
 
-    <div @click="hideEndScreen()" v-if="showEndScreen" class="end-screen" :style="{'border-color': endResult == 'victory' ? 'turquoise' : 'gold'}">
-      <div v-if="endResult == 'victory'" class="victory">
-        Victory!
-      </div>
-      <div v-else-if="endResult == 'defeat'" class="defeat">
-        Defeat...
-      </div>
+
+  <div @click="hideEndScreen()" v-if="showEndScreen" class="end-screen" :style="{'border-color': endResult == 'victory' ? 'turquoise' : 'gold'}">
+    <div v-if="endResult == 'victory'" class="victory">
+      Victory!
+    </div>
+    <div v-else-if="endResult == 'defeat'" class="defeat">
+      Defeat...
     </div>
   </div>
 </template>
