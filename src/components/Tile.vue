@@ -102,7 +102,11 @@ export default {
       }
     },
     heightFilter(){
-      return `brightness(${(this.height * 20) + 50}%)`
+      if(this.viewMode === 'isometric'){
+        return ''
+      } else {
+        return `brightness(${(this.height * 20) + 50}%)`
+      }
     }
   },
   mounted(){
