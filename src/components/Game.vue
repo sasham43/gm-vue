@@ -521,12 +521,7 @@ export default {
       this.endResult = result;
       window.setTimeout(() => {
         this.showEndScreen = true;
-      }, 2000)
-      // if(this.turnOrder[0].player){
-      //   this.endResult = 'victory'
-      // } else {
-      //   this.endResult = 'defeat'
-      // }
+      }, 2000);
     },
     hideEndScreen(){
       this.showEndScreen = false;

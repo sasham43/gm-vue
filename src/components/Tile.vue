@@ -119,6 +119,9 @@ export default {
   border-color: rgba(0, 0, 0, 0);
   cursor: pointer;
 }
+.tile:hover {
+  border-color: #fff;
+}
 .right-side-tile,
 .left-side-tile {
     width: 50px;
