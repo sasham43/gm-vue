@@ -11,6 +11,7 @@ export default {
     tile: Number, // for now...
     height: Number,
     highlightedMoveTiles: Array,
+    viewMode: String,
   },
   computed: {
     translate(){
@@ -93,6 +94,13 @@ export default {
         return 'translate(-38px, -128px)'
       }
     },
+    heightTranslate(){
+      if(this.viewMode === 'isometric'){
+        return `translate(-${this.height * 50}px, -${this.height * 50}px)`
+      } else {
+        return `translate(0px)`
+      }
+    }
   },
   mounted(){
     // console.log("height", this.height)
@@ -111,13 +119,13 @@ export default {
         'highlighted-move-tile': isHighlightedMove,
         'highlighted-attack-tile': isHighlightedAttack,
       }"
-      :style="{ 'transform': `translate(-${height * 50}px, -${height * 50}px)` }"
+      :style="{ 'transform': heightTranslate }"
     >
       <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
       <!-- <span>{{ `translate(${height * 50}px ${height * 50}px)` }}</span> -->
     </div>
-    <div v-if="height > 0" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)` }"></div>
-    <div v-if="height > 0" class="right-side-tile"
+    <div v-if="height > 0 && viewMode === 'isometric'" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)` }"></div>
+    <div v-if="height > 0 && viewMode === 'isometric'" class="right-side-tile"
       :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)` }"></div>
   </div>
 </template>

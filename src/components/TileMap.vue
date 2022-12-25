@@ -9,6 +9,7 @@ export default {
     currentActor: Object,
     mode: String,
     highlightedMoveTiles: Array,
+    viewMode: String,
   },
   emits:['tileSelect'],
   computed: {
@@ -60,6 +61,7 @@ export default {
           :mode="mode"
           :height="heightMap[rowIndex][colIndex]"
           :highlightedMoveTiles="highlightedMoveTiles"
+          :viewMode="viewMode"
         ></Tile>
       </div>
     </div>

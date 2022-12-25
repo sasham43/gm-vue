@@ -17,6 +17,7 @@ export default {
     },
     heightMap: Array,
     effect: String,
+    viewMode: String,
   },
   data() {
     return {
@@ -124,7 +125,7 @@ export default {
 <template>
   <div
     :style="{ top: top, left: left }"
-    :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage, 'healing': isHealing }"
+    :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage, 'healing': isHealing, 'isometric': viewMode === 'isometric' }"
     class="actor"
   >
     <div class="health-change" :class="{'damage-info': isTakingDamage, 'healing-info': isHealing}">
@@ -162,7 +163,10 @@ export default {
 
   /* isometric */
   /* transform: scaleX(2) scaleY(2) rotate(-45deg) translateY(-10px); */
-  transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2)
+  /* transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2); */
+}
+.actor.isometric {
+  transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2);
 }
 
 .sprite-wrapper {

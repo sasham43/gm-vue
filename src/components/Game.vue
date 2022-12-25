@@ -168,7 +168,9 @@ export default {
       },
       // showAbilities: false,
       showButtons: '',
-      highlightedMoveTiles: []
+      highlightedMoveTiles: [],
+      // viewMode: 'top-down',
+      viewMode: 'isometric',
     };
   },
   computed: {
@@ -647,6 +649,10 @@ export default {
 
         this.currentActorAttacked = true;
       }
+    },
+    setViewMode(mode){
+      console.log('mode', mode)
+      this.viewMode = mode;
     }
   },
   watch: {
@@ -710,9 +716,19 @@ export default {
       <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
         <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
         <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
-        {{ mode }}
+        <!-- {{ mode }} -->
     </div>
-    <div class="tilemap" :style="{top: mapPan.y, left: mapPan.x}" :class="{'grabbing': isMouseDown}">
+
+    <div class="settings-container">
+      <button @click="setViewMode('top-down')" v-if="viewMode === 'isometric'">
+        Top Down
+      </button>
+      <button @click="setViewMode('isometric')" v-if="viewMode === 'top-down'">
+        Isometric
+      </button>
+    </div>
+
+    <div class="tilemap" :style="{top: mapPan.y, left: mapPan.x}" :class="{'grabbing': isMouseDown, 'isometric': viewMode === 'isometric', 'top-down': viewMode === 'top-down'}">
       <TileMap
         @tile-select="onTileSelect"
         :player="player"
@@ -721,11 +737,14 @@ export default {
         :mode="mode"
         :heightMap="heightMap" 
         :highlightedMoveTiles="highlightedMoveTiles"
+        :viewMode="viewMode"
       ></TileMap>
-      <Actor v-bind="player" :tiles="tiles" :heightMap="heightMap"></Actor>
-      <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy" :heightMap="heightMap"></Actor>
+      <Actor v-bind="player" :tiles="tiles" :heightMap="heightMap" :viewMode="viewMode"></Actor>
+      <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy" :heightMap="heightMap" :viewMode="viewMode"></Actor>
     </div>
   </div>
+
+
   <div class="attack-view-container">
     <div class="attacker" :class="{'player-view': currentActor.player, 'enemy-view': currentActor.enemy, 'visible-attacker': currentActor.name}">
 
@@ -811,6 +830,9 @@ export default {
   margin-top: 20vh;
 
   /* transform: rotate(45deg) scaleX(2) scaleY(.75); */
+  /* transform: scaleX(2) scaleY(.5) rotate(45deg); */
+}
+.tilemap.isometric {
   transform: scaleX(2) scaleY(.5) rotate(45deg);
 }
 .turn {
@@ -820,6 +842,11 @@ export default {
 }
 .current-turn {
   border-color: blueviolet;
+}
+.settings-container {
+  position: absolute;
+  top: 0px;
+  right: 0px;
 }
 
 .attacker.player-view {
@@ -858,6 +885,7 @@ export default {
 .visible-defender {
   transform: translateX(0px);
 }
+
 
 .attack-view-container {
   display: flex;
