@@ -120,7 +120,7 @@ export default {
   cursor: pointer;
 }
 .tile:hover {
-  border-color: #fff;
+  border-color: #fff !important;
 }
 .right-side-tile,
 .left-side-tile {
