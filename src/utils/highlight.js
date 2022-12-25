@@ -30,7 +30,7 @@ export function isHighlightedAttack(
   originY,
   range
 ) {
-  console.log('is hilghted attack', type, tileX, tileY, originX, originY, range)
+  // console.log('is hilghted attack', type, tileX, tileY, originX, originY, range)
   if (type === "melee") {
     let xClose, yClose;
 
@@ -45,7 +45,7 @@ export function isHighlightedAttack(
       xClose = Math.abs(originX - tileX);
     }
 
-    console.log('melee distance', xClose, yClose)
+    // console.log('melee distance', xClose, yClose)
 
     if (xClose == 1 && yClose == 0) {
       return true;

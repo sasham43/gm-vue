@@ -60,8 +60,7 @@ export default {
         // this.playerY,
         this.currentActor.x,
         this.currentActor.y,
-        this.currentActor.selectedAttack.range,
-        
+        this.currentActor.selectedAttack.range,        
       );
     },
     isHighlightedMeleeAttack() {
