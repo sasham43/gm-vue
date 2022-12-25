@@ -662,7 +662,7 @@ export default {
     </div>
   </div>
   <div class="attack-view-container">
-    <div class="attacker" :class="{'player-view': currentActor.player, 'enemy-view': currentActor.enemy}">
+    <div class="attacker" :class="{'player-view': currentActor.player, 'enemy-view': currentActor.enemy, 'visible-attacker': currentActor.name}">
 
       <div class="attack-view-upper">
         <div class="attack-view-sprite-container">
@@ -690,7 +690,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy}">
+    <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy, 'visible-defender': currentDefender.name}">
       <div class="defend-view-upper">
         <div class="defend-view-sprite-container">
           <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
@@ -761,6 +761,24 @@ export default {
 .attacker.enemy-view {
   background:linear-gradient(to right, orangered 0%, rgba(255, 255, 255, 0) 90%);
   /* color: black; */
+}
+
+.attacker,
+.defender {
+  transition: 0.2s transform;
+}
+
+.attacker {
+  transform: translateX(-50vw);
+}
+.visible-attacker {
+  transform: translateX(0px);
+}
+.defender {
+  transform: translateX(50vw);
+}
+.visible-defender {
+  transform: translateX(0px);
 }
 
 .attack-view-container {
