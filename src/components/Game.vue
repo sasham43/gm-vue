@@ -92,6 +92,15 @@ export default {
       showAttackInfo: false,
       showEndScreen: false,
       endResult: '',
+      isMouseDown: false,
+      mapPan: {
+        x: 0,
+        y: 0,
+      },
+      mouseDownPoint: {
+        x: 0,
+        y: 0,
+      }
     };
   },
   computed: {
@@ -106,6 +115,16 @@ export default {
     currentTile() {
       return this.tiles[this.playerX][this.playerY];
     },
+    showResetMapPanButton(){
+      let x = this.mapPan.x//.replace('px', '')
+      let y = this.mapPan.y//.replace('px', '')
+
+      if(x != 0 && y != 0){
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
   methods: {
     nextTurn() {
@@ -416,6 +435,63 @@ export default {
     hideEndScreen(){
       this.showEndScreen = false;
       this.endResult = '';
+    },
+    onMouseDown(event){
+      // console.log('on mouse down', document.body.classList)
+      this.isMouseDown = true;
+
+      // capture mouse position
+      this.mouseDownPoint = {
+          x: `${event.pageX}`,
+          y: `${event.pageY}`
+        }
+
+      // document.body.addClass('grabbing')
+      document.body.classList = ['grabbing']
+    },
+    onMouseUp(event){
+      // console.log('on mouse Up')
+      this.isMouseDown = false;
+      // document.body.removeClass('grabbing')
+
+      document.body.classList = []
+    },
+    onMouseMove(event){
+      if(this.isMouseDown){
+
+        let x, y;
+        let modifier = ''
+        if(this.mouseDownPoint.x > event.pageX){
+          x = this.mouseDownPoint.x - event.pageX
+          modifier = '-'
+        } else {
+          x = event.pageX - this.mouseDownPoint.x
+          // modifier = ''
+        }
+        if(this.mouseDownPoint.y > event.pageY){
+          y = this.mouseDownPoint.y - event.pageY
+          modifier = '-'
+        } else {
+          y = event.pageY - this.mouseDownPoint.y
+          // modifier = ''
+        }
+        console.log('x, y', x, y, modifier)
+        
+        // console.log('on mouse Move', event.pageX, event.pageY)
+        this.mapPan = {
+          x: `${modifier}${x}px`,
+          y: `${modifier}${y}px`
+        }
+        // console.log('map pan', this.mapPan, this.mouseDownPoint)
+
+        // compare current position to mouse down captured
+      }
+    },
+    resetMapPosition(){
+      this.mapPan = {
+        x: '0',
+        y: '0'
+      }
     }
   },
   watch: {
@@ -432,10 +508,21 @@ export default {
     }
   },
   components: { TileMap, Actor, Sprite },
+  mounted(){
+    console.log('game create')
+
+    document.body.addEventListener('mousedown', this.onMouseDown)
+    document.body.addEventListener('mouseup', this.onMouseUp)
+    document.body.addEventListener('mousemove', this.onMouseMove)
+  }
 };
 </script>
 
 <template>
+
+  <button v-if="showResetMapPanButton" @click="resetMapPosition" class="reset-map-position">
+    Reset Map
+  </button>
 
   <div class="battle-turn-container">
     <button @click="previousTurn()">&lt; turn</button>
@@ -453,7 +540,7 @@ export default {
       <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button>
       <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
     </div>
-    <div class="tilemap">
+    <div class="tilemap" :style="{top: mapPan.y, left: mapPan.x}" :class="{'grabbing': isMouseDown}">
       <TileMap
         @tile-select="onTileSelect"
         :player="player"
@@ -676,7 +763,12 @@ button {
 .defeat {
   background-color: orangered;
   border: gold;
+}
 
+.reset-map-position {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 
 @media(max-width: 400px){

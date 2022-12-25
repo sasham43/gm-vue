@@ -19,6 +19,13 @@
   -webkit-text-size-adjust: 100%;
 }
 
+.grabbing {
+  cursor: grabbing;
+}
+button {
+  cursor: pointer;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -43,6 +50,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  cursor: grab;
 }
 
 h1 {
