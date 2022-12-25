@@ -322,6 +322,7 @@ export default {
 
         // wait for player input
         console.log("player turn");
+        this.mode = 'player-turn'
       } else {
         // AI actions
         console.log("enemy turn");
