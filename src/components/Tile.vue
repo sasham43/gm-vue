@@ -117,6 +117,7 @@ export default {
   border-width: 2px;
   border-style: solid;
   border-color: rgba(0, 0, 0, 0);
+  cursor: pointer;
 }
 .right-side-tile,
 .left-side-tile {

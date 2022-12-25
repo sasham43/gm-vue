@@ -458,7 +458,7 @@ export default {
     },
     onMouseMove(event){
       if(this.isMouseDown){
-
+        // fix this, gets weird if you pan to the right
         let x, y;
         let modifier = ''
         if(this.mouseDownPoint.x > event.pageX){
@@ -475,16 +475,11 @@ export default {
           y = event.pageY - this.mouseDownPoint.y
           // modifier = ''
         }
-        console.log('x, y', x, y, modifier)
-        
-        // console.log('on mouse Move', event.pageX, event.pageY)
+
         this.mapPan = {
           x: `${modifier}${x}px`,
           y: `${modifier}${y}px`
         }
-        // console.log('map pan', this.mapPan, this.mouseDownPoint)
-
-        // compare current position to mouse down captured
       }
     },
     resetMapPosition(){
@@ -591,7 +586,7 @@ export default {
 
       <div class="defender-info-container">
         <div>
-          Defender: {{ currentDefender.name }}
+          {{ currentDefender.name }}
         </div>
         <div>
           HP: {{ currentDefender.health }} / {{ currentDefender.healthMax }}
@@ -772,6 +767,11 @@ button {
 }
 
 @media(max-width: 400px){
+  .defend-view-sprite-container {
+    transform: scale(400%);
+    margin-top: 25px;
+    margin-right: 25px;
+  }
   .attack-view-sprite-container {
     transform: scale(400%);
     margin-top: 25px;
