@@ -2,7 +2,7 @@ function random(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export default function rollDice(dice) {
+export default function rollDice(dice, modifier=0) {
   let numDice = dice.split("d")[0];
   let dieType = dice.split("d")[1];
   let rolls = [];
@@ -14,6 +14,7 @@ export default function rollDice(dice) {
 
   return {
     rolls: rolls,
-    total: rolls.reduce((sum, a) => sum + a),
+    modifier: modifier,
+    total: rolls.reduce((sum, a) => sum + a) + modifier,
   };
 }

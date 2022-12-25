@@ -51,6 +51,29 @@ export default {
         range: 2,
         initiative: 0,
         sprite: "src/assets/hero-1.png",
+        stats: {
+          str: 16,
+          dex: 16,
+          con: 14,
+          wis: 14,
+          int: 12,
+          cha: 10,
+        },
+        ac: 15,
+        attacks: [
+          {
+            type: 'melee',
+            name: 'sword',
+            stat: 'str',
+            damage: '1d8'
+          },
+          {
+            type: 'ranged',
+            name: 'dart',
+            stat: 'dex',
+            damage: '1d4'
+          }
+        ]
       },
       //   playerPos: "1,2",
       mode: "free",
@@ -67,6 +90,22 @@ export default {
           healthMax: 4,
           initiative: 0,
           sprite: "src/assets/enemy-1.png",
+          stats: {
+            str: 12,
+            dex: 12,
+            con: 12,
+            wis: 12,
+            int: 12,
+            cha: 12,
+          },
+          ac: 12,
+          attacks: [
+            {
+              type: 'melee',
+              name: 'axe',
+              damage: '1d6'
+            }
+          ]
         },
         {
           enemy: true,
@@ -74,13 +113,30 @@ export default {
           x: 4,
           y: 0,
           speed: 1,
-          attack: "ranged",
+          // attack: "ranged",
           health: 4,
           healthMax: 4,
           initiative: 0,
-          range: 2,
-          rangedPower: 2,
+          // range: 2,
+          // rangedPower: 2,
           sprite: "src/assets/enemy-2.png",
+          stats: {
+            str: 12,
+            dex: 12,
+            con: 12,
+            wis: 12,
+            int: 12,
+            cha: 12,
+          },
+          ac: 12,
+          attacks: [
+            {
+              type: 'ranged',
+              name: 'bow & arrow',
+              damage: '1d6',
+              range: 2,
+            }
+          ]
         },
       ],
       turnOrder: [],
@@ -100,7 +156,8 @@ export default {
       mouseDownPoint: {
         x: 0,
         y: 0,
-      }
+      },
+      showAbilities: false,
     };
   },
   computed: {
@@ -131,6 +188,8 @@ export default {
 
       this.currentActorAttacked = false;
       this.currentActorMoved = false;
+
+      console.log('nextTurn turnOrder', this.turnOrder.length)
 
       console.log('nextTurn',this.currentTurn, this.turnOrder.length - 1)
 
@@ -264,17 +323,19 @@ export default {
       }
     },
     enemyTurn(actor) {
+      console.log('jjjj', this.showEndScreen)
       if(this.showEndScreen) return;
       this.currentDefender = this.player;
+      let attack = actor.attacks[0]
       // check if can attack player
-      if (actor.attack == "ranged") {
+      if (attack.type == "ranged") {
         let isAttackable = isHighlightedAttack(
           "ranged",
           this.player.x,
           this.player.y,
           actor.x,
           actor.y,
-          actor.range
+          attack.range
         );
         // console.log("is attackable", isAttackable);
         if (!isAttackable) {
@@ -298,7 +359,10 @@ export default {
           } else {
             // console.log("ranged attack");
             this.enemyChoice(() => {
-              this.player.health -= actor.rangedPower;
+              let damage = rollDice(attack.damage)
+              this.player.health -= damage.total;
+              console.log('damage', damage)
+              // this.player.health -= actor.rangedPower;
               // console.log("player health:", this.player.health);
               // this.nextTurn();
               this.currentActorAttacked = true;
@@ -306,7 +370,7 @@ export default {
             });
           }
         }
-      } else if (actor.attack == "melee") {
+      } else if (attack.type == "melee") {
         let isAttackable = isHighlightedAttack(
           "melee",
           this.player.x,
@@ -407,6 +471,7 @@ export default {
     filterDead(){
       console.log('filtering dead')
       this.turnOrder = this.turnOrder.filter(actor => {
+        console.log('actor health', actor.health)
         return actor.health > 0;
       })
 
@@ -487,6 +552,15 @@ export default {
         x: '0',
         y: '0'
       }
+    },
+    displayAbilities(){
+      this.showAbilities = true;
+    },
+    hideAbilities(){
+      this.showAbilities = false;
+    },
+    selectAttack(attack){
+      this.player.selectedAttack = attack;
     }
   },
   watch: {
@@ -504,7 +578,7 @@ export default {
   },
   components: { TileMap, Actor, Sprite },
   mounted(){
-    console.log('game create')
+    // console.log('game create')
 
     document.body.addEventListener('mousedown', this.onMouseDown)
     document.body.addEventListener('mouseup', this.onMouseUp)
@@ -531,8 +605,16 @@ export default {
   </div>
   <div>
     <div>
-      <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
-      <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button>
+      <div v-if="showAbilities" class="abilities">
+        <button @click="selectAttack(attack)" v-for="attack in player.attacks">
+          {{ attack.name }} - {{ attack.type }}
+        </button>
+      </div>
+      <button @click="displayAbilities()">
+        abilities
+      </button>
+      <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
+      <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
       <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
     </div>
     <div class="tilemap" :style="{top: mapPan.y, left: mapPan.x}" :class="{'grabbing': isMouseDown}">
@@ -556,9 +638,9 @@ export default {
           <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
         </div>
   
-        <div class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+        <div v-if="currentActor.selectedAttack" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
           <div class="attack-info">
-            Power: {{ currentActor.attackPower }}
+            {{ currentActor.selectedAttack.name }} - {{ currentActor.selectedAttack.type }}
           </div>
           <div class="attack-info">
             <button class="attack-button" @click="playerAttack()">
