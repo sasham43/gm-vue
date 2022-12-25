@@ -644,6 +644,8 @@ export default {
         } else {
           this.player.health += amount;
         }
+
+        this.currentActorAttacked = true;
       }
     }
   },
@@ -699,16 +701,16 @@ export default {
           {{ item.name }} - {{ item.effect }}
         </button>
       </div>
-      <button @click="displayAbilities()">
+      <button @click="displayAbilities()" :disabled="currentActor.player && currentActorAttacked">
         abilities
       </button>
-      <button @click="displayItems()">
+      <button @click="displayItems()" :disabled="currentActor.player && currentActorAttacked">
         items
       </button>
-      {{ mode }}
       <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
-      <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
-      <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
+        <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
+        <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
+        {{ mode }}
     </div>
     <div class="tilemap" :style="{top: mapPan.y, left: mapPan.x}" :class="{'grabbing': isMouseDown}">
       <TileMap
@@ -732,7 +734,7 @@ export default {
           <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
         </div>
   
-        <div v-if="currentActor.selectedAttack" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+        <div v-if="currentActor.selectedAttack && !currentActorAttacked" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
           <div class="attack-info">
             {{ currentActor.selectedAttack.name }} - {{ currentActor.selectedAttack.type }}
           </div>
@@ -742,7 +744,7 @@ export default {
             </button>
           </div>
         </div>
-        <div v-if="currentActor.selectedItem" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+        <div v-if="currentActor.selectedItem && !currentActorAttacked" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
           <div class="attack-info">
             {{ currentActor.selectedItem.name }} - {{ currentActor.selectedItem.effect }}
           </div>
