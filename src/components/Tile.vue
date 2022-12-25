@@ -100,6 +100,9 @@ export default {
       } else {
         return `translate(0px)`
       }
+    },
+    heightFilter(){
+      return `brightness(${(this.height * 20) + 50}%)`
     }
   },
   mounted(){
@@ -119,14 +122,14 @@ export default {
         'highlighted-move-tile': isHighlightedMove,
         'highlighted-attack-tile': isHighlightedAttack,
       }"
-      :style="{ 'transform': heightTranslate }"
+      :style="{ 'transform': heightTranslate, 'filter': heightFilter }"
     >
       <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
       <!-- <span>{{ `translate(${height * 50}px ${height * 50}px)` }}</span> -->
     </div>
-    <div v-if="height > 0 && viewMode === 'isometric'" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)` }"></div>
+    <div v-if="height > 0 && viewMode === 'isometric'" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)`, 'filter': heightFilter }"></div>
     <div v-if="height > 0 && viewMode === 'isometric'" class="right-side-tile"
-      :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)` }"></div>
+      :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)`, 'filter': heightFilter }"></div>
   </div>
 </template>
 
