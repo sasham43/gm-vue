@@ -113,6 +113,12 @@ export default {
   components: {
     Sprite,
   },
+  // created(){
+  //   window.setTimeout(() => {
+  //     this.isTakingDamage = true
+  //     this.damageTaken = 10;
+  //   },2000)
+  // }
 };
 </script>
 <template>
@@ -121,19 +127,21 @@ export default {
     :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage, 'healing': isHealing }"
     class="actor"
   >
-  <div class="health-change" :class="{'damage-info': isTakingDamage, 'healing-info': isHealing}">
-    <span v-if="isTakingDamage">
-      -{{ damageTaken }}
-      <!-- -4 -->
-    </span>
-    <span v-if="isHealing">
-      +{{ healAmount }}
-    </span>
-    <span v-if="actorEffect">
-      {{ actorEffect }}
-    </span>
-  </div>
-    <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
+    <div class="health-change" :class="{'damage-info': isTakingDamage, 'healing-info': isHealing}">
+      <span v-if="isTakingDamage">
+        -{{ damageTaken }}
+        <!-- -4 -->
+      </span>
+      <span v-if="isHealing">
+        +{{ healAmount }}
+      </span>
+      <span v-if="actorEffect">
+        {{ actorEffect }}
+      </span>
+    </div>
+    <div class="sprite-wrapper" :class="{'damage-shake': isTakingDamage}">
+      <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
+    </div>
     <!-- <span>{{ currentHeight }}</span> -->
   </div>
 </template>
@@ -155,6 +163,33 @@ export default {
   /* isometric */
   /* transform: scaleX(2) scaleY(2) rotate(-45deg) translateY(-10px); */
   transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2)
+}
+
+.sprite-wrapper {
+  /* transition: 0.1s translate ease; */
+  animation-duration: .3s;
+  animation-timing-function: linear;
+}
+.damage-shake {
+  /* transform: translateX(5px); */
+  animation-name: shake;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(5px);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+
+  100% {
+    transform: translateX(0px);
+  }
 }
 
 .damage {
