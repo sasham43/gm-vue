@@ -518,8 +518,10 @@ export default {
       }
     },
     endBattle(result){
-      this.showEndScreen = true;
       this.endResult = result;
+      window.setTimeout(() => {
+        this.showEndScreen = true;
+      }, 2000)
       // if(this.turnOrder[0].player){
       //   this.endResult = 'victory'
       // } else {
