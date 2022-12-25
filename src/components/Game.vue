@@ -43,11 +43,11 @@ export default {
         // pos: "1,2",
         x: 1,
         y: 2,
-        speed: 1,
-        meleePower: 2,
+        speed: 2,
+        // meleePower: 2,
         health: 10,
         healthMax: 10,
-        rangedPower: 1,
+        // rangedPower: 1,
         range: 2,
         initiative: 0,
         sprite: "src/assets/hero-1.png",
@@ -328,7 +328,7 @@ export default {
         currentActor.distanceFromStart = 0;
         this.enemyTurn(currentActor);
       }
-      this.highlightedMoveTiles = highlightMovementTiles(this.tiles, currentActor, this.player.speed)
+      this.highlightedMoveTiles = highlightMovementTiles(this.tiles, currentActor, currentActor.speed)
       console.log('we can move onto these', this.highlightedMoveTiles)
 
 
