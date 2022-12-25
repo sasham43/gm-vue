@@ -56,9 +56,12 @@ export default {
         "ranged",
         this.x,
         this.y,
-        this.playerX,
-        this.playerY,
-        2
+        // this.playerX,
+        // this.playerY,
+        this.currentActor.x,
+        this.currentActor.y,
+        this.currentActor.selectedAttack.range,
+        
       );
     },
     isHighlightedMeleeAttack() {
@@ -67,8 +70,11 @@ export default {
         "melee",
         this.x,
         this.y,
-        this.playerX,
-        this.playerY
+        // this.playerX,
+        // this.playerY
+
+        this.currentActor.x,
+        this.currentActor.y,
       );
     },
     isHighlightedAttack() {

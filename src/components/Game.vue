@@ -371,6 +371,7 @@ export default {
             this.currentActorMoved = true;
           } else {
             // console.log("ranged attack");
+            this.mode = actor.selectedAttack.type;
             this.enemyChoice(() => {
               // let damage = rollDice(attack.damage)
               // this.player.health -= damage.total;
@@ -415,6 +416,7 @@ export default {
             this.currentActorMoved = true;
           } else {
             // console.log("melee attack");
+            this.mode = actor.selectedAttack.type;
             this.enemyChoice(() => {
               this.performAttack(actor, this.player)
               // this.player.health -= actor.meleePower;
@@ -648,6 +650,7 @@ export default {
       <button @click="displayAbilities()">
         abilities
       </button>
+      {{ mode }}
       <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
       <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
       <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>

@@ -30,6 +30,7 @@ export function isHighlightedAttack(
   originY,
   range
 ) {
+  console.log('is hilghted attack', type, tileX, tileY, originX, originY, range)
   if (type === "melee") {
     let xClose, yClose;
 
