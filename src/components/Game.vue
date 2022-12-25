@@ -437,7 +437,7 @@ export default {
 
 <template>
 
-  <div>
+  <div class="battle-turn-container">
     <button @click="previousTurn()">&lt; turn</button>
     <button @click="rollInitiative()">battle</button>
     <button @click="nextTurn()">> turn</button>
@@ -468,40 +468,54 @@ export default {
   </div>
   <div class="attack-view-container">
     <div class="attacker" :class="{'player-view': currentActor.player, 'enemy-view': currentActor.enemy}">
-      <div>
-        Attacker: {{ currentActor.name }}
+
+      <div class="attack-view-upper">
+        <div class="attack-view-sprite-container">
+          <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
+        </div>
+  
+        <div class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+          <div class="attack-info">
+            Power: {{ currentActor.attackPower }}
+          </div>
+          <div class="attack-info">
+            <button class="attack-button" @click="playerAttack()">
+              Attack
+            </button>
+          </div>
+        </div>
       </div>
-      <div>
-        HP: {{ currentActor.health }} / {{ currentActor.healthMax }}
-      </div>
-      <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
-        Power: {{ currentActor.attackPower }}
-      </div>
-      <div :class="{'show-attack-info': showAttackInfo}" class="attack-info">
-        <button class="attack-button" @click="playerAttack()">
-          Attack
-        </button>
-      </div>
-      <div class="attack-view-sprite-container">
-        <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
+
+      <div class="attacker-info-container">
+        <div>
+          {{ currentActor.name }}
+        </div>
+        <div>
+          HP: {{ currentActor.health }} / {{ currentActor.healthMax }}
+        </div>
       </div>
     </div>
     <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy}">
-      <div>
-        Defender: {{ currentDefender.name }}
-      </div>
-      <div>
-        HP: {{ currentDefender.health }} / {{ currentDefender.healthMax }}
+      <div class="defend-view-upper">
+        <div class="defend-view-sprite-container">
+          <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
+        </div>
       </div>
 
-      <div>
+      <div class="defender-info-container">
+        <div>
+          Defender: {{ currentDefender.name }}
+        </div>
+        <div>
+          HP: {{ currentDefender.health }} / {{ currentDefender.healthMax }}
+        </div>
+      </div>
+
+      <!-- <div>
         <button class="defend-button">
           Defend
         </button>
-      </div>
-      <div class="attack-view-sprite-container">
-        <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
-      </div>
+      </div> -->
     </div>
 
     <div @click="hideEndScreen()" v-if="showEndScreen" class="end-screen" :style="{'border-color': endResult == 'victory' ? 'turquoise' : 'gold'}">
@@ -519,7 +533,7 @@ export default {
 .tilemap {
   position: relative;
 
-  margin-top: 50vh;
+  margin-top: 20vh;
 
   /* transform: rotate(45deg) scaleX(2) scaleY(.75); */
   transform: scaleX(2) scaleY(.5) rotate(45deg);
@@ -533,19 +547,34 @@ export default {
   border-color: blueviolet;
 }
 
-.player-view {
-  background:linear-gradient(aquamarine 0%, rgba(255, 255, 255, 0) 50%);
+.attacker.player-view {
+  background:linear-gradient(to right, aquamarine 0%, rgba(255, 255, 255, 0) 90%);
   color: black;
+  padding-bottom: 20px;
 }
-.enemy-view {
-  background:linear-gradient(orangered 0%, rgba(255, 255, 255, 0) 50%);
+.defender.player-view {
+  background:linear-gradient(to left, aquamarine 0%, rgba(255, 255, 255, 0) 90%);
+  color: black;
+  padding-bottom: 20px;
+}
+.defender.enemy-view {
+  background:linear-gradient(to left, orangered 0%, rgba(255, 255, 255, 0) 90%);
+  /* color: black; */
+}
+.attacker.enemy-view {
+  background:linear-gradient(to right, orangered 0%, rgba(255, 255, 255, 0) 90%);
   /* color: black; */
 }
 
 .attack-view-container {
   display: flex;
   flex-direction: row;
-  width: 30vw;
+  /* width: 30vw; */
+
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
 }
 .attack-view-container>div {
   flex-grow: 1;
@@ -556,16 +585,40 @@ export default {
     display: flex;
     justify-content: center;
     margin-top: 50px;
+    margin-left: 50px;
     pointer-events: none;
+    width: 25px;
+    height: 25px;      
+}
+.defend-view-sprite-container {
+    transform: scale(500%);
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    margin-right: 50px;
+    pointer-events: none;
+    width: 25px;
+    height: 25px;      
+}
+.defend-view-upper {
+  display: flex;
+  justify-content: flex-end;
+}
+.attack-view-upper {
+  display: flex;
+  flex-direction: row;
 }
 button {
   z-index: 50;
 }
-
-
-.attack-info {
-  opacity: 0;
+.attack-info-container {
+  width: 100%;
+  margin-top: 5px;
 }
+
+/* .attack-info {
+  opacity: 0;
+} */
 .show-attack-info {
   opacity: 1;
 }
@@ -579,6 +632,12 @@ button {
 }
 .player-view .attack-button {
   opacity: 1;
+}
+
+.battle-turn-container {
+  position: absolute;
+  left: 5px;
+  top: 5px;
 }
 
 .end-screen {
@@ -618,5 +677,13 @@ button {
   background-color: orangered;
   border: gold;
 
+}
+
+@media(max-width: 400px){
+  .attack-view-sprite-container {
+    transform: scale(400%);
+    margin-top: 25px;
+    margin-left: 25px;
+  }
 }
 </style>
