@@ -79,7 +79,8 @@ export default {
             type: 'ranged',
             name: 'dart',
             stat: 'dex',
-            damage: '1d4'
+            damage: '1d4',
+            range: 2,
           }
         ]
       },
@@ -524,6 +525,9 @@ export default {
         // console.log('actor health', actor.health)
         return actor.health > 0;
       })
+      if(this.currentTurn >= this.turnOrder.length){
+        this.currentTurn = 0;
+      }
       // console.log('filtered dead', JSON.stringify(this.turnOrder))
 
       let livingPlayers = this.turnOrder.filter(actor => {
@@ -635,7 +639,11 @@ export default {
       if(item.effect == 'heal'){
         let amount = rollDice(item.amount).total;
 
-        this.player.health += amount;
+        if(this.player.health + amount > this.player.healthMax){
+          this.player.health = this.player.healthMax;
+        } else {
+          this.player.health += amount;
+        }
       }
     }
   },
@@ -697,7 +705,7 @@ export default {
       <button @click="displayItems()">
         items
       </button>
-      <!-- {{ mode }} -->
+      {{ mode }}
       <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
       <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
       <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
