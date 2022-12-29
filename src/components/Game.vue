@@ -636,6 +636,7 @@ export default {
       this.showButtons = ''
     },
     selectAttack(attack){
+      console.log('attack', attack)
       this.player.selectedAttack = attack;
       this.mode = attack.type;
     },
@@ -718,7 +719,7 @@ export default {
         <button @click="burnMetal(power)" v-for="power in player.allomancy">
           {{ power.metal }}
         </button>
-        <button @click="burnMetal(power)" v-for="power in player.availablePowers">
+        <button @click="selectAttack(power)" v-for="power in player.availablePowers">
           {{ power.name }}
         </button>
       </div>
@@ -1023,6 +1024,11 @@ button {
   position: absolute;
   top: 5px;
   right: 5px;
+}
+
+.abilities {
+  position: absolute;
+  top: 30px;
 }
 
 @media(max-width: 400px){

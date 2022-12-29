@@ -4,7 +4,9 @@ export default {
             // what
             name: 'coinshot',
             range: 5,
-            damage: '1d8'
+            damage: '1d8',
+            stat: 'wis',
+            type: 'ranged'
         },
         coinjump: {
             name: 'coinjump',
