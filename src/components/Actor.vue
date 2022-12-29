@@ -28,6 +28,7 @@ export default {
       isTakingDamage: false,
       isHealing: false,
       actorEffect: '',
+      isBurningMetal: false,
     };
   },
   computed: {
@@ -114,12 +115,15 @@ export default {
   components: {
     Sprite,
   },
-  // created(){
-  //   window.setTimeout(() => {
-  //     this.isTakingDamage = true
-  //     this.damageTaken = 10;
-  //   },2000)
-  // }
+  created(){
+    // window.setTimeout(() => {
+    //   this.isTakingDamage = true
+    //   this.damageTaken = 10;
+    // },2000)
+    // window.setInterval(() => {
+    //   this.isBurningMetal = !this.isBurningMetal;
+    // }, 1000)
+  }
 };
 </script>
 <template>
@@ -142,6 +146,7 @@ export default {
     </div>
     <div class="sprite-wrapper" :class="{'damage-shake': isTakingDamage}">
       <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
+      <Sprite class="blur-sprite" :class="{'blur-sprite-show': isBurningMetal}" :spritesheet="sprite" :pose="pose"></Sprite>
     </div>
     <!-- <span>{{ currentHeight }}</span> -->
   </div>
@@ -167,6 +172,19 @@ export default {
 }
 .actor.isometric {
   transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2);
+}
+
+.blur-sprite {
+  /* filter: blur(4px); */
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  z-index: 8;
+  filter: sepia() saturate(10000%) hue-rotate(240deg) blur(6px);
+  transition: 1s opacity ease-in;
+}
+.blur-sprite-show {
+  opacity: 1;
 }
 
 .sprite-wrapper {

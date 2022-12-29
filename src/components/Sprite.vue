@@ -189,6 +189,7 @@ export default {
   height: 24px;
   position: relative;
   overflow: hidden;
+  z-index: 10;
 }
 .sprite {
   position: absolute;
