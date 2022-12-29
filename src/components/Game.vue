@@ -9,6 +9,7 @@ import {
 } from "../utils/highlight";
 import { pathfinding, highlightMovementTiles } from '../utils/movement'
 import rollDice, {findModifier} from "../utils/dice";
+import allomancy from '../utils/powers'
 
 import _ from "lodash";
 
@@ -68,6 +69,13 @@ export default {
             target: 'self',
           }
         ],
+        allomancy: [
+          {
+            metal: 'steel'
+          }
+        ],
+        availablePowers: [],
+        burningMetals: [],
         attacks: [
           {
             type: 'melee',
@@ -171,6 +179,7 @@ export default {
       highlightedMoveTiles: [],
       // viewMode: 'top-down',
       viewMode: 'isometric',
+      burnRate: 3,
     };
   },
   computed: {
@@ -653,6 +662,11 @@ export default {
     setViewMode(mode){
       console.log('mode', mode)
       this.viewMode = mode;
+    },
+    burnMetal(power){
+      console.log('we got it', power, allomancy[power.metal], allomancy)
+      this.player.availablePowers = allomancy[power.metal]
+      this.player.burningMetals.push(power.metal)
     }
   },
   watch: {
@@ -700,6 +714,12 @@ export default {
       <div v-if="showAbilities" class="abilities">
         <button @click="selectAttack(attack)" v-for="attack in player.attacks">
           {{ attack.name }} - {{ attack.type }}
+        </button>
+        <button @click="burnMetal(power)" v-for="power in player.allomancy">
+          {{ power.metal }}
+        </button>
+        <button @click="burnMetal(power)" v-for="power in player.availablePowers">
+          {{ power.name }}
         </button>
       </div>
       <div v-if="showItems" class="abilities">

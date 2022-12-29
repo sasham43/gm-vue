@@ -18,6 +18,7 @@ export default {
     heightMap: Array,
     effect: String,
     viewMode: String,
+    burningMetals: Array
   },
   data() {
     return {
@@ -29,6 +30,7 @@ export default {
       isHealing: false,
       actorEffect: '',
       isBurningMetal: false,
+      burnInterval: null,
     };
   },
   computed: {
@@ -77,7 +79,10 @@ export default {
     },
     heightTransform(){
       return `translate(-${this.currentHeight * 50}px, -${this.currentHeight * 50}px)`
-    }
+    },
+    // isBurningMetal(){
+    //   return this.burningMetals?.length > 0;
+    // }
   },
   watch: {
     health(newValue, oldValue){
@@ -110,6 +115,16 @@ export default {
       window.setTimeout(() => {
         this.actorEffect = '';
       }, 1000)
+    },
+    'burningMetals.length'(newValue, oldValue){
+      console.log('watching', newValue, oldValue)
+      if(newValue > oldValue && newValue > 0){
+        console.log('setting interfval')
+        this.burnInterval = window.setInterval(() => {
+          console.log('switching')
+          this.isBurningMetal = !this.isBurningMetal;
+        }, 1000)
+      }
     }
   },
   components: {
