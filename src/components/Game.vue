@@ -69,11 +69,12 @@ export default {
             target: 'self',
           }
         ],
-        allomancy: [
-          {
-            metal: 'steel'
-          }
-        ],
+        // allomancy: [
+        //   {
+        //     metal: 'steel'
+        //   }
+        // ],
+        allomancy,
         availablePowers: [],
         burningMetals: [],
         attacks: [
@@ -664,10 +665,10 @@ export default {
       console.log('mode', mode)
       this.viewMode = mode;
     },
-    burnMetal(power){
-      console.log('we got it', power, allomancy[power.metal], allomancy)
-      this.player.availablePowers = allomancy[power.metal]
-      this.player.burningMetals.push(power.metal)
+    burnMetal(power, metal){
+      console.log('we got it', power, allomancy[metal], allomancy)
+      this.player.availablePowers = allomancy[metal].abilities
+      this.player.burningMetals.push(power)
     }
   },
   watch: {
@@ -716,8 +717,8 @@ export default {
         <button @click="selectAttack(attack)" v-for="attack in player.attacks">
           {{ attack.name }} - {{ attack.type }}
         </button>
-        <button @click="burnMetal(power)" v-for="power in player.allomancy">
-          {{ power.metal }}
+        <button @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy">
+          {{ key }}
         </button>
         <button @click="selectAttack(power)" v-for="power in player.availablePowers">
           {{ power.name }}
