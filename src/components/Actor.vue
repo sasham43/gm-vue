@@ -126,7 +126,7 @@ export default {
       }, 1000)
     },
     currentTurn(newValue, oldValue){
-      console.log('turn changed', this.name, this.currentActor.name === this.name)
+      // console.log('turn changed', this.name, this.currentActor.name === this.name)
       if(this.isActiveTurn){
         // update metal values
         this.burningMetals?.forEach(metal => {

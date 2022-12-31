@@ -693,11 +693,12 @@ export default {
       this.viewMode = mode;
     },
     burnMetal(power, metal){
-      console.log('we got it', power, allomancy[metal], allomancy)
+      // console.log('we got it', power, allomancy[metal], allomancy)
       this.player.availablePowers = allomancy[metal].abilities
 
       // instantiate
       power.details.currentBurn = 0;
+      this.player.points.mp.current--;
       this.player.burningMetals.push(power.details)
     },
     displayMetals(){
@@ -844,7 +845,10 @@ export default {
           {{ currentActor.name }}
         </div>
         <div class="hp" :style="{ 'background': `linear-gradient(to right, red ${(currentActor.points?.hp.current / currentActor.points?.hp.max) * 100}%, white .1%)`}">
-          HP: {{ currentActor.points?.hp.current }} / {{ currentActor.points?.hp.max }} - {{ (currentActor.points?.hp.current / currentActor.points?.hp.max) }}
+          HP: {{ currentActor.points?.hp.current }} / {{ currentActor.points?.hp.max }}
+        </div>
+        <div class="hp" v-if="currentActor.points?.mp" :style="{ 'background': `linear-gradient(to right, blue ${(currentActor.points?.mp.current / currentActor.points?.mp.max) * 100}%, white .1%)`}">
+          MP: {{ currentActor.points?.mp.current }} / {{ currentActor.points?.mp.max }}
         </div>
       </div>
     </div>
@@ -859,8 +863,13 @@ export default {
         <div>
           {{ currentDefender.name }}
         </div>
-        <div class="hp">
+        <div class="hp"
+          :style="{ 'background': `linear-gradient(to right, red ${(currentDefender.points?.hp.current / currentDefender.points?.hp.max) * 100}%, white .1%)`}">
           HP: {{ currentDefender.points?.hp.current }} / {{ currentDefender.points?.hp.max }}
+        </div>
+        <div class="hp" v-if="currentDefender.points?.mp"
+          :style="{ 'background': `linear-gradient(to right, blue ${(currentDefender.points?.mp.current / currentDefender.points?.mp.max) * 100}%, white .1%)`}">
+          MP: {{ currentDefender.points?.mp.current }} / {{ currentDefender.points?.mp.max }}
         </div>
         <div>
           AC: {{ currentDefender.ac }}
@@ -958,6 +967,7 @@ export default {
 }
 
 
+.defender-info-container,
 .attacker-info-container {
   padding: 0px 100px;
 }
