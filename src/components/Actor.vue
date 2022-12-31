@@ -190,6 +190,7 @@ export default {
     <div class="sprite-wrapper" :class="{'damage-shake': isTakingDamage}">
       <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
       <Sprite class="blur-sprite" :class="{'blur-sprite-show': isBurningMetal}" :spritesheet="sprite" :pose="pose"></Sprite>
+      <Sprite class="blur-sprite-outline" :class="{'blur-sprite-show': isBurningMetal}" :spritesheet="sprite" :pose="pose"></Sprite>
     </div>
     <!-- <span>{{ currentHeight }}</span> -->
   </div>
@@ -224,7 +225,17 @@ export default {
   top: 0;
   z-index: 8;
   filter: sepia() saturate(10000%) hue-rotate(240deg) blur(10px);
-  transform: scaleX(4.4);
+  transform: scaleX(1.4);
+  transition: 1s opacity ease-in-out;
+}
+.blur-sprite-outline {
+  /* filter: blur(4px); */
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  z-index: 8;
+  filter: sepia() saturate(10000%) hue-rotate(240deg) blur(1px);
+  transform: scale(1.1);
   transition: 1s opacity ease-in-out;
 }
 .blur-sprite-show {
