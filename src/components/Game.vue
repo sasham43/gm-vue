@@ -187,6 +187,7 @@ export default {
       currentDefender: {},
       showAttackInfo: false,
       showEndScreen: false,
+      showMetals: false,
       endResult: '',
       isMouseDown: false,
       mapPan: {
@@ -379,20 +380,20 @@ export default {
       // console.log('we can move onto these', this.highlightedMoveTiles)
 
       // update current actor turn values
-      if(this.currentActor.burningMetals?.length){
-        this.currentActor.burningMetals = this.currentActor.burningMetals.map(metal => {
-          metal.currentBurn++;
-          return metal;
-        })
-        this.currentActor.burningMetals = this.currentActor.burningMetals.filter(metal => {
-          return metal.currentBurn < metal.burnRate;
-        })
-        console.log('metals:', this.currentActor.burningMetals)
-        // update this later
-        if(this.currentActor.burningMetals.length == 0){
-          this.currentActor.availablePowers = []
-        }
-      }
+      // if(this.currentActor.burningMetals?.length){
+      //   this.currentActor.burningMetals = this.currentActor.burningMetals.map(metal => {
+      //     metal.currentBurn++;
+      //     return metal;
+      //   })
+      //   this.currentActor.burningMetals = this.currentActor.burningMetals.filter(metal => {
+      //     return metal.currentBurn < metal.burnRate;
+      //   })
+      //   console.log('metals:', this.currentActor.burningMetals)
+      //   // update this later
+      //   if(this.currentActor.burningMetals.length == 0){
+      //     this.currentActor.availablePowers = []
+      //   }
+      // }
 
 
     },
@@ -694,8 +695,17 @@ export default {
     burnMetal(power, metal){
       console.log('we got it', power, allomancy[metal], allomancy)
       this.player.availablePowers = allomancy[metal].abilities
+
+      // instantiate
+      power.details.currentBurn = 0;
       this.player.burningMetals.push(power.details)
-    }
+    },
+    displayMetals(){
+      this.showMetals = true;
+    },
+    hideMetals(){
+      this.showMetals = false;
+    },
   },
   watch: {
     currentTurn(newValue, oldValue) {
@@ -739,12 +749,15 @@ export default {
   </div>
   <div>
     <div>
+      <div v-if="showMetals" class="metals abilities">
+        <!-- <button @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy">
+          {{ key }} - {{ power.details.currentBurn }}
+        </button> -->
+        <MetalButton :label="key" :burnRate="power.details.burnRate" :currentBurn="power.details.currentBurn" @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy"></MetalButton>
+      </div>
       <div v-if="showAbilities" class="abilities">
         <button @click="selectAttack(attack)" v-for="attack in player.attacks">
           {{ attack.name }} - {{ attack.type }}
-        </button>
-        <button @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy">
-          {{ key }}
         </button>
         <button @click="selectAttack(power)" v-for="power in player.availablePowers">
           {{ power.name }}
@@ -757,6 +770,9 @@ export default {
       </div>
       <button @click="displayAbilities()" :disabled="currentActor.player && currentActorAttacked">
         abilities
+      </button>
+      <button @click="displayMetals()" :disabled="!currentActor.player">
+        metals
       </button>
       <button @click="displayItems()" :disabled="currentActor.player && currentActorAttacked">
         items
@@ -787,8 +803,8 @@ export default {
         :highlightedMoveTiles="highlightedMoveTiles"
         :viewMode="viewMode"
       ></TileMap>
-      <Actor v-bind="player" :tiles="tiles" :heightMap="heightMap" :viewMode="viewMode"></Actor>
-      <Actor v-for="enemy in enemies" :isEnemy="true" v-bind="enemy" :heightMap="heightMap" :viewMode="viewMode"></Actor>
+      <Actor v-bind="player" :currentTurn="currentTurn" :currentActor="currentActor" :tiles="tiles" :heightMap="heightMap" :viewMode="viewMode"></Actor>
+      <Actor v-for="enemy in enemies" :currentTurn="currentTurn" :currentActor="currentActor" :isEnemy="true" v-bind="enemy" :heightMap="heightMap" :viewMode="viewMode"></Actor>
     </div>
   </div>
 

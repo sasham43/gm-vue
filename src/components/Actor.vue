@@ -1,4 +1,5 @@
 <script>
+import _ from 'lodash'
 import Sprite from "./Sprite.vue";
 export default {
   props: {
@@ -19,6 +20,9 @@ export default {
     heightMap: Array,
     effect: String,
     viewMode: String,
+    currentTurn: Number,
+    currentActor: Object,
+    name: String,
     burningMetals: Array
   },
   data() {
@@ -82,6 +86,9 @@ export default {
     heightTransform(){
       return `translate(-${this.currentHeight * 50}px, -${this.currentHeight * 50}px)`
     },
+    isActiveTurn(){
+      return this.currentActor.name === this.name
+    }
     // isBurningMetal(){
     //   return this.burningMetals?.length > 0;
     // }
@@ -117,6 +124,19 @@ export default {
       window.setTimeout(() => {
         this.actorEffect = '';
       }, 1000)
+    },
+    currentTurn(newValue, oldValue){
+      console.log('turn changed', this.name, this.currentActor.name === this.name)
+      if(this.isActiveTurn){
+        // update metal values
+        this.burningMetals?.forEach(metal => {
+          if(metal.currentBurn === metal.burnRate){
+            metal.currentBurn = 0;
+          } else {
+            metal.currentBurn++;
+          }
+        })
+      }
     },
     'burningMetals.length'(newValue, oldValue){
       // console.log('watching', newValue, oldValue)

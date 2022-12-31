@@ -2,7 +2,7 @@ export default {
     steel: {
         details: {
             burnRate: 3,
-            currentBurn: 0,
+            currentBurn: -1,
         },
         abilities: {
             coinshot: {
