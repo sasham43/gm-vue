@@ -127,15 +127,17 @@ export default {
     },
     currentTurn(newValue, oldValue){
       // console.log('turn changed', this.name, this.currentActor.name === this.name)
-      if(this.isActiveTurn){
+      if(this.isActiveTurn && this.burningMetals?.length){
         // update metal values
         this.burningMetals?.forEach(metal => {
           if(metal.currentBurn === metal.burnRate){
-            metal.currentBurn = 0;
+            metal.currentBurn = -1;
           } else {
             metal.currentBurn++;
           }
         })
+        
+        this.$emit('update-burning-metals')
       }
     },
     'burningMetals.length'(newValue, oldValue){

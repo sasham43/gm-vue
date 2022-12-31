@@ -187,7 +187,7 @@ export default {
       currentDefender: {},
       showAttackInfo: false,
       showEndScreen: false,
-      showMetals: false,
+      // showMetals: false,
       endResult: '',
       isMouseDown: false,
       mapPan: {
@@ -234,6 +234,9 @@ export default {
     showItems(){
       return this.showButtons == 'items'
     },
+    showMetals(){
+      return this.showButtons == 'metals'
+    }
   },
   methods: {
     nextTurn() {
@@ -320,7 +323,8 @@ export default {
           console.log('attack', enemy)
         }
       } else if (this.mode === 'fly'){
-        this.flyPlayer(col, row)
+        this.flyPlayer(col, row);
+        this.currentActorAttacked = true;
       }
 
       this.setMode("free");
@@ -714,10 +718,11 @@ export default {
       this.player.burningMetals.push(power.details)
     },
     displayMetals(){
-      this.showMetals = true;
+      // this.showMetals = true;
+      this.showButtons = 'metals'
     },
     hideMetals(){
-      this.showMetals = false;
+      // this.showMetals = false;
     },
     selectMetal(metal, name){
       console.log('metal', metal)
@@ -725,6 +730,11 @@ export default {
       this.player.selectedAttack.name = name;
       this.player.selectedAttack.type = 'metal';
       this.player.selectedAttack.label = 'Burn'
+    },
+    updateBurningMetals(){
+      this.player.burningMetals = this.player.burningMetals.filter(metal => {
+        return metal.currentBurn > 0;
+      })
     }
   },
   watch: {
@@ -757,7 +767,9 @@ export default {
     Reset Map
   </button>
 
-  <div class="battle-turn-container">
+
+
+  <!-- <div class="battle-turn-container">
     <button @click="previousTurn()">&lt; turn</button>
     <button @click="rollInitiative()">battle</button>
     <button @click="nextTurn()">> turn</button>
@@ -766,13 +778,57 @@ export default {
         {{ actor.name }}
       </div>
     </div>
-  </div>
-  <div>
-    <div>
+  </div> -->
+
+  <div class="buttons">
+
+    <div class="battle-turn-container">
+      <button @click="previousTurn()">&lt; turn</button>
+      <button @click="rollInitiative()">battle</button>
+      <button @click="nextTurn()">> turn</button>
+      <div>
+        <div class="turn" :class="{ 'current-turn': currentTurn == turn }" v-for="(actor, turn) in turnOrder">
+          {{ actor.name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="player-controls">
       <div v-if="showMetals" class="metals abilities">
-        <!-- <button @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy">
-          {{ key }} - {{ power.details.currentBurn }}
-        </button> -->
+        <MetalButton :label="key" :burnRate="power.details.burnRate" :currentBurn="power.details.currentBurn"
+          @click="selectMetal(power, key)" v-for="(power, key) in player.allomancy"></MetalButton>
+      </div>
+      <div v-if="showAbilities" class="abilities">
+        <button @click="selectAttack(attack)" v-for="attack in player.attacks">
+          {{ attack.name }} - {{ attack.type }}
+        </button>
+        <button @click="selectAttack(power)" v-for="power in player.availablePowers">
+          {{ power.name }}
+        </button>
+      </div>
+      <div v-if="showItems" class="abilities">
+        <button @click="selectItem(item)" v-for="item in player.items">
+          {{ item.name }} - {{ item.effect }}
+        </button>
+      </div>
+      <button @click="displayAbilities()" :disabled="currentActor.player && currentActorAttacked">
+        abilities
+      </button>
+      <button @click="displayMetals()" :disabled="!currentActor.player">
+        metals
+      </button>
+      <button @click="displayItems()" :disabled="currentActor.player && currentActorAttacked">
+        items
+      </button>
+      <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
+    </div>
+  </div>
+
+  
+
+  <div>
+    <!-- <div class="player-controls">
+      <div v-if="showMetals" class="metals abilities">
         <MetalButton :label="key" :burnRate="power.details.burnRate" :currentBurn="power.details.currentBurn" @click="selectMetal(power, key)" v-for="(power, key) in player.allomancy"></MetalButton>
       </div>
       <div v-if="showAbilities" class="abilities">
@@ -797,11 +853,8 @@ export default {
       <button @click="displayItems()" :disabled="currentActor.player && currentActorAttacked">
         items
       </button>
-      <!-- <button @click="setMode('melee')" :disabled="currentActor.player && currentActorAttacked">melee</button>
-        <button @click="setMode('ranged')" :disabled="currentActor.player && currentActorAttacked">ranged</button> -->
-        <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
-        <!-- {{ mode }} -->
-    </div>
+      <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
+    </div> -->
 
     <div class="settings-container">
       <button @click="setViewMode('top-down')" v-if="viewMode === 'isometric'">
@@ -823,7 +876,7 @@ export default {
         :highlightedMoveTiles="highlightedMoveTiles"
         :viewMode="viewMode"
       ></TileMap>
-      <Actor v-bind="player" :currentTurn="currentTurn" :currentActor="currentActor" :tiles="tiles" :heightMap="heightMap" :viewMode="viewMode"></Actor>
+      <Actor v-bind="player" @updateBurningMetals="updateBurningMetals" :currentTurn="currentTurn" :currentActor="currentActor" :tiles="tiles" :heightMap="heightMap" :viewMode="viewMode"></Actor>
       <Actor v-for="enemy in enemies" :currentTurn="currentTurn" :currentActor="currentActor" :isEnemy="true" v-bind="enemy" :heightMap="heightMap" :viewMode="viewMode"></Actor>
     </div>
   </div>
@@ -946,11 +999,21 @@ export default {
   right: 0px;
 }
 
+.buttons {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+}
+
 .hp {
   /* background-color: red; */
   /* background: linear-gradient(to right, red 80%, white 10%); */
   /* margin-right: 100px;
   margin-left: 100px; */
+  color: black;
 }
 
 .metal-ability {
@@ -1071,9 +1134,9 @@ button {
 }
 
 .battle-turn-container {
-  position: absolute;
+  /* position: absolute;
   left: 5px;
-  top: 5px;
+  top: 5px; */
 }
 
 .end-screen {
