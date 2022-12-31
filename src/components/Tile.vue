@@ -26,6 +26,20 @@ export default {
       return this.player.y;
       // return this.player?.pos.split(",")[1];
     },
+    isHighlightedFly(){
+      if(this.mode == 'fly'){
+        return isHighlightedAttack(
+          "ranged",
+          this.x,
+          this.y,
+          // this.playerX,
+          // this.playerY,
+          this.currentActor.x,
+          this.currentActor.y,
+          this.currentActor.selectedAttack.range,
+        );
+      }
+    },
     isHighlightedMove() {
       if (this.mode != "player-move" && this.mode != 'enemy-move') return false;
 
@@ -124,6 +138,7 @@ export default {
         'filled-tile': tile === 1,
         'enemy': currentActor.enemy,
         'highlighted-move-tile': isHighlightedMove,
+        'highlighted-move-tile': isHighlightedFly,
         'highlighted-attack-tile': isHighlightedAttack,
       }"
       :style="{ 'transform': heightTranslate, 'filter': heightFilter }"

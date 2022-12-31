@@ -15,6 +15,7 @@ export default {
             },
             coinjump: {
                 name: 'coinjump',
+                type: 'fly',
                 range: 3,
             },
             steelpush: {

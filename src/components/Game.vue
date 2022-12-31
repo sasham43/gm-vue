@@ -261,6 +261,8 @@ export default {
     playerAttack(){
           if(this.currentActor.selectedAttack.type === 'metal'){
             this.burnMetal(this.player.selectedAttack, this.player.selectedAttack.name)
+          } else if (this.currentActor.selectedAttack.type === 'fly') {
+            this.setMode('fly')
           } else {
             this.performAttack(this.player, this.currentDefender)
             // this.currentDefender.health -= this.player.attackPower;
@@ -316,9 +318,9 @@ export default {
 
 
           console.log('attack', enemy)
-        } else {
-          console.log('no attack ranged', isAttackable, enemy)
         }
+      } else if (this.mode === 'fly'){
+        this.flyPlayer(col, row)
       }
 
       this.setMode("free");
@@ -327,6 +329,10 @@ export default {
       return this.enemies.find((enemy) => {
         return `${enemy.x},${enemy.y}` === selectPos;
       });
+    },
+    flyPlayer(x, y){
+      this.player.x = x;
+      this.player.y = y;
     },
     movePlayer(x, y) {
       let result = pathfinding(this.tiles, this.player, { x, y });
@@ -835,6 +841,11 @@ export default {
           <div class="attack-info">
             {{ currentActor.selectedAttack.name }} - {{ currentActor.selectedAttack.type }}
           </div>
+          <div v-if="currentActor.selectedAttack?.abilities">
+            <span class="metal-ability" v-for="ability in currentActor.selectedAttack?.abilities">
+              {{  ability.name }}
+            </span>
+          </div>
           <div class="attack-info">
             <button class="attack-button" @click="playerAttack()">
               {{currentActor.selectedAttack.label ? currentActor.selectedAttack.label : 'Attack'}}
@@ -940,6 +951,12 @@ export default {
   /* background: linear-gradient(to right, red 80%, white 10%); */
   /* margin-right: 100px;
   margin-left: 100px; */
+}
+
+.metal-ability {
+  display: inline-block;
+  font-size: 9px;
+  margin-right: 6px;
 }
 
 .attacker.player-view {
