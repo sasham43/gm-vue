@@ -259,9 +259,13 @@ export default {
       }
     },
     playerAttack(){
-          this.performAttack(this.player, this.currentDefender)
-          // this.currentDefender.health -= this.player.attackPower;
-          this.currentActorAttacked = true;
+          if(this.currentActor.selectedAttack.type === 'metal'){
+            this.burnMetal(this.player.selectedAttack, this.player.selectedAttack.name)
+          } else {
+            this.performAttack(this.player, this.currentDefender)
+            // this.currentDefender.health -= this.player.attackPower;
+            this.currentActorAttacked = true;
+          }
     },
     onTileSelect(tile, row, col, isNavigable) {
       let selectPos = `${col},${row}`;
@@ -709,6 +713,13 @@ export default {
     hideMetals(){
       this.showMetals = false;
     },
+    selectMetal(metal, name){
+      console.log('metal', metal)
+      this.player.selectedAttack = metal;
+      this.player.selectedAttack.name = name;
+      this.player.selectedAttack.type = 'metal';
+      this.player.selectedAttack.label = 'Burn'
+    }
   },
   watch: {
     currentTurn(newValue, oldValue) {
@@ -756,7 +767,7 @@ export default {
         <!-- <button @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy">
           {{ key }} - {{ power.details.currentBurn }}
         </button> -->
-        <MetalButton :label="key" :burnRate="power.details.burnRate" :currentBurn="power.details.currentBurn" @click="burnMetal(power, key)" v-for="(power, key) in player.allomancy"></MetalButton>
+        <MetalButton :label="key" :burnRate="power.details.burnRate" :currentBurn="power.details.currentBurn" @click="selectMetal(power, key)" v-for="(power, key) in player.allomancy"></MetalButton>
       </div>
       <div v-if="showAbilities" class="abilities">
         <button @click="selectAttack(attack)" v-for="attack in player.attacks">
@@ -826,7 +837,7 @@ export default {
           </div>
           <div class="attack-info">
             <button class="attack-button" @click="playerAttack()">
-              Attack
+              {{currentActor.selectedAttack.label ? currentActor.selectedAttack.label : 'Attack'}}
             </button>
           </div>
         </div>
