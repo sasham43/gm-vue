@@ -10,6 +10,7 @@ export default {
     y: Number,
     isEnemy: Boolean,
     health: Number,
+    points: Object,
     sprite: String,
     spritePose: {
       type: String,
@@ -29,6 +30,7 @@ export default {
       isTakingDamage: false,
       isHealing: false,
       actorEffect: '',
+      // isBurningMetal: true,
       isBurningMetal: false,
       burnInterval: null,
     };
@@ -68,7 +70,7 @@ export default {
       }px`;
     },
     pose(){
-      if(this.health <= 0){
+      if(this.points.hp.current <= 0){
         return 'standing'
       } else {
         return this.spritePose;
@@ -85,7 +87,7 @@ export default {
     // }
   },
   watch: {
-    health(newValue, oldValue){
+    'points.hp.current'(newValue, oldValue){
       if(newValue < oldValue){
         let damageDuration = 400;
         this.damageTaken = oldValue - newValue;
@@ -117,15 +119,21 @@ export default {
       }, 1000)
     },
     'burningMetals.length'(newValue, oldValue){
-      console.log('watching', newValue, oldValue)
+      // console.log('watching', newValue, oldValue)
       if(newValue > oldValue && newValue > 0){
-        console.log('setting interfval')
+        // console.log('setting interfval')
         this.burnInterval = window.setInterval(() => {
-          console.log('switching')
+          // console.log('switching')
           this.isBurningMetal = !this.isBurningMetal;
         }, 1000)
+      } else {
+        window.clearInterval(this.burnInterval)
+        this.isBurningMetal = false;
       }
-    }
+    },
+    // currentTurn(newValue, oldValue){
+    //   console.log('next turn', newValue)
+    // }
   },
   components: {
     Sprite,
@@ -144,7 +152,7 @@ export default {
 <template>
   <div
     :style="{ top: top, left: left }"
-    :class="{ enemy: this.isEnemy, dead: health <= 0, 'damage': isTakingDamage, 'healing': isHealing, 'isometric': viewMode === 'isometric' }"
+    :class="{ enemy: this.isEnemy, dead: points?.hp.current <= 0, 'damage': isTakingDamage, 'healing': isHealing, 'isometric': viewMode === 'isometric' }"
     class="actor"
   >
     <div class="health-change" :class="{'damage-info': isTakingDamage, 'healing-info': isHealing}">
@@ -195,8 +203,9 @@ export default {
   position: absolute;
   top: 0;
   z-index: 8;
-  filter: sepia() saturate(10000%) hue-rotate(240deg) blur(6px);
-  transition: 1s opacity ease-in;
+  filter: sepia() saturate(10000%) hue-rotate(240deg) blur(10px);
+  transform: scaleX(4.4);
+  transition: 1s opacity ease-in-out;
 }
 .blur-sprite-show {
   opacity: 1;

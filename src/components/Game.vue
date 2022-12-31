@@ -46,8 +46,18 @@ export default {
         y: 2,
         speed: 2,
         // meleePower: 2,
-        health: 10,
-        healthMax: 10,
+        points: {
+          hp: {
+            current: 10,
+            max: 10
+          },
+          mp: {
+            current: 5,
+            max: 5,
+          }
+        },
+        // health: 10,
+        // healthMax: 10,
         // rangedPower: 1,
         range: 2,
         initiative: 0,
@@ -104,8 +114,14 @@ export default {
           speed: 1,
           attack: "melee",
           meleePower: 2,
-          health: 4,
-          healthMax: 4,
+          points: {
+            hp: {
+              current: 4,
+              max: 4
+            },
+          },
+          // health: 4,
+          // healthMax: 4,
           initiative: 0,
           sprite: "src/assets/enemy-1.png",
           stats: {
@@ -132,8 +148,14 @@ export default {
           y: 0,
           speed: 1,
           // attack: "ranged",
-          health: 4,
-          healthMax: 4,
+          // health: 4,
+          // healthMax: 4,
+          points: {
+            hp: {
+              current: 4,
+              max: 4
+            },
+          },
           initiative: 0,
           // range: 2,
           // rangedPower: 2,
@@ -218,9 +240,9 @@ export default {
       this.currentActorAttacked = false;
       this.currentActorMoved = false;
 
-      console.log('nextTurn turnOrder', this.turnOrder.length)
+      // console.log('nextTurn turnOrder', this.turnOrder.length)
 
-      console.log('nextTurn',this.currentTurn, this.turnOrder.length - 1)
+      // console.log('nextTurn',this.currentTurn, this.turnOrder.length - 1)
 
       if (this.currentTurn === this.turnOrder.length - 1) {
         this.currentTurn = 0;
@@ -269,8 +291,6 @@ export default {
           this.currentDefender = enemy;
           this.player.attackPower = this.player.meleePower;
           this.displayAttackView();
-          // enemy.health -= this.player.meleePower;
-          // this.currentActorAttacked = true;
         }
       } else if (this.mode == "ranged") {
         let isAttackable = isHighlightedAttack(
@@ -290,10 +310,7 @@ export default {
           this.displayAttackView();
 
 
-          // this.performAttack(this.player, enemy)
-
-          // enemy.health -= this.player.rangedPower;
-          // this.currentActorAttacked = true;
+          console.log('attack', enemy)
         }
       }
 
@@ -342,6 +359,7 @@ export default {
       //   this.nextTurn();
       // }
       // console.log('watch current turn', newValue)
+      console.log('currentAcot', this.turnOrder, newValue, currentActor)
 
       this.currentActor = currentActor;
       this.currentDefender = {}
@@ -358,7 +376,23 @@ export default {
         this.enemyTurn(currentActor);
       }
       this.highlightedMoveTiles = highlightMovementTiles(this.tiles, currentActor, currentActor.speed)
-      console.log('we can move onto these', this.highlightedMoveTiles)
+      // console.log('we can move onto these', this.highlightedMoveTiles)
+
+      // update current actor turn values
+      if(this.currentActor.burningMetals?.length){
+        this.currentActor.burningMetals = this.currentActor.burningMetals.map(metal => {
+          metal.currentBurn++;
+          return metal;
+        })
+        this.currentActor.burningMetals = this.currentActor.burningMetals.filter(metal => {
+          return metal.currentBurn < metal.burnRate;
+        })
+        console.log('metals:', this.currentActor.burningMetals)
+        // update this later
+        if(this.currentActor.burningMetals.length == 0){
+          this.currentActor.availablePowers = []
+        }
+      }
 
 
     },
@@ -401,14 +435,7 @@ export default {
             // console.log("ranged attack");
             this.mode = actor.selectedAttack.type;
             this.enemyChoice(() => {
-              // let damage = rollDice(attack.damage)
-              // this.player.health -= damage.total;
-              // console.log('damage', damage)
-
-              this.performAttack(actor, this.player)
-              // this.player.health -= actor.rangedPower;
-              // console.log("player health:", this.player.health);
-              // this.nextTurn();
+              this.performAttack(actor, this.player);
               this.currentActorAttacked = true;
               this.enemyTurn(actor);
             });
@@ -446,9 +473,7 @@ export default {
             // console.log("melee attack");
             this.mode = actor.selectedAttack.type;
             this.enemyChoice(() => {
-              this.performAttack(actor, this.player)
-              // this.player.health -= actor.meleePower;
-              // console.log("player health:", this.player.health);
+              this.performAttack(actor, this.player);
               this.currentActorAttacked = true;
               this.enemyTurn(actor);
             });
@@ -476,7 +501,8 @@ export default {
         let damage = rollDice(attack.damage, modifier)
         // console.log('hit!', damage)
 
-        defender.health -= damage.total;
+        // defender.health -= damage.total;
+        defender.points.hp.current -= damage.total;
       } else {
         // console.log('miss')
         defender.effect = 'miss'
@@ -535,7 +561,7 @@ export default {
       // console.log('filtering dead')
       this.turnOrder = this.turnOrder.filter(actor => {
         // console.log('actor health', actor.health)
-        return actor.health > 0;
+        return actor.points.hp.current > 0;
       })
       if(this.currentTurn >= this.turnOrder.length){
         this.currentTurn = 0;
@@ -652,10 +678,10 @@ export default {
       if(item.effect == 'heal'){
         let amount = rollDice(item.amount).total;
 
-        if(this.player.health + amount > this.player.healthMax){
-          this.player.health = this.player.healthMax;
+        if(this.player.points.hp.current + amount > this.player.points.hp.max){
+          this.player.points.hp.current = this.player.points.hp.max;
         } else {
-          this.player.health += amount;
+          this.player.points.hp.current += amount;
         }
 
         this.currentActorAttacked = true;
@@ -668,7 +694,7 @@ export default {
     burnMetal(power, metal){
       console.log('we got it', power, allomancy[metal], allomancy)
       this.player.availablePowers = allomancy[metal].abilities
-      this.player.burningMetals.push(power)
+      this.player.burningMetals.push(power.details)
     }
   },
   watch: {
@@ -801,8 +827,8 @@ export default {
         <div>
           {{ currentActor.name }}
         </div>
-        <div>
-          HP: {{ currentActor.health }} / {{ currentActor.healthMax }}
+        <div class="hp" :style="{ 'background': `linear-gradient(to right, red ${(currentActor.points?.hp.current / currentActor.points?.hp.max) * 100}%, white .1%)`}">
+          HP: {{ currentActor.points?.hp.current }} / {{ currentActor.points?.hp.max }} - {{ (currentActor.points?.hp.current / currentActor.points?.hp.max) }}
         </div>
       </div>
     </div>
@@ -817,8 +843,8 @@ export default {
         <div>
           {{ currentDefender.name }}
         </div>
-        <div>
-          HP: {{ currentDefender.health }} / {{ currentDefender.healthMax }}
+        <div class="hp">
+          HP: {{ currentDefender.points?.hp.current }} / {{ currentDefender.points?.hp.max }}
         </div>
         <div>
           AC: {{ currentDefender.ac }}
@@ -871,6 +897,13 @@ export default {
   right: 0px;
 }
 
+.hp {
+  /* background-color: red; */
+  /* background: linear-gradient(to right, red 80%, white 10%); */
+  /* margin-right: 100px;
+  margin-left: 100px; */
+}
+
 .attacker.player-view {
   background:linear-gradient(to right, aquamarine 0%, rgba(255, 255, 255, 0) 90%);
   color: black;
@@ -908,6 +941,10 @@ export default {
   transform: translateX(0px);
 }
 
+
+.attacker-info-container {
+  padding: 0px 100px;
+}
 
 .attack-view-container {
   display: flex;
