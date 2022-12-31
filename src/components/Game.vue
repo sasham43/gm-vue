@@ -300,7 +300,7 @@ export default {
           row,
           this.playerX,
           this.playerY,
-          this.player.range
+          this.player.selectedAttack.range
         );
 
         let enemy = this.findEnemyPos(selectPos);
@@ -312,6 +312,8 @@ export default {
 
 
           console.log('attack', enemy)
+        } else {
+          console.log('no attack ranged', isAttackable, enemy)
         }
       }
 
