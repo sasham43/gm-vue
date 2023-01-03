@@ -1,5 +1,5 @@
 <script>
-import _ from 'lodash'
+import _ from "lodash";
 import Sprite from "./Sprite.vue";
 export default {
   props: {
@@ -23,7 +23,7 @@ export default {
     currentTurn: Number,
     currentActor: Object,
     name: String,
-    burningMetals: Array
+    burningMetals: Array,
   },
   data() {
     return {
@@ -33,7 +33,7 @@ export default {
       tileMarginBase: 4,
       isTakingDamage: false,
       isHealing: false,
-      actorEffect: '',
+      actorEffect: "",
       // isBurningMetal: true,
       isBurningMetal: false,
       burnInterval: null,
@@ -65,37 +65,41 @@ export default {
     },
     left() {
       return `${
-        ((this.tileWidth + this.tileMargin + this.tileBorder) * this.xPos) - (this.currentHeight * 50)
+        (this.tileWidth + this.tileMargin + this.tileBorder) * this.xPos -
+        this.currentHeight * 50
       }px`;
     },
     top() {
       return `${
-        ((this.tileHeight + this.tileMargin + this.tileBorder) * this.yPos) - (this.currentHeight * 50)
+        (this.tileHeight + this.tileMargin + this.tileBorder) * this.yPos -
+        this.currentHeight * 50
       }px`;
     },
-    pose(){
-      if(this.points.hp.current <= 0){
-        return 'standing'
+    pose() {
+      if (this.points.hp.current <= 0) {
+        return "standing";
       } else {
         return this.spritePose;
       }
     },
-    currentHeight(){
-      return this.heightMap[this.y][this.x]
+    currentHeight() {
+      return this.heightMap[this.y][this.x];
     },
-    heightTransform(){
-      return `translate(-${this.currentHeight * 50}px, -${this.currentHeight * 50}px)`
+    heightTransform() {
+      return `translate(-${this.currentHeight * 50}px, -${
+        this.currentHeight * 50
+      }px)`;
     },
-    isActiveTurn(){
-      return this.currentActor.name === this.name
-    }
+    isActiveTurn() {
+      return this.currentActor.name === this.name;
+    },
     // isBurningMetal(){
     //   return this.burningMetals?.length > 0;
     // }
   },
   watch: {
-    'points.hp.current'(newValue, oldValue){
-      if(newValue < oldValue){
+    "points.hp.current"(newValue, oldValue) {
+      if (newValue < oldValue) {
         let damageDuration = 400;
         this.damageTaken = oldValue - newValue;
         this.isTakingDamage = true;
@@ -103,51 +107,51 @@ export default {
         window.setTimeout(() => {
           this.isTakingDamage = false;
           this.damageTaken = 0;
-        }, damageDuration)
+        }, damageDuration);
         // Add damage shake
         // add healing
         // add little pop up that shows the damage
         // change the transition to have damage effect be faster
-      } else if (newValue > oldValue){
+      } else if (newValue > oldValue) {
         let healDuration = 1000;
-        this.healAmount = newValue - oldValue
+        this.healAmount = newValue - oldValue;
         this.isHealing = true;
 
         window.setTimeout(() => {
           this.isHealing = false;
           this.healAmount = 0;
-        }, healDuration)
+        }, healDuration);
       }
     },
-    effect(newValue, oldValue){
-      this.actorEffect = newValue
+    effect(newValue, oldValue) {
+      this.actorEffect = newValue;
       window.setTimeout(() => {
-        this.actorEffect = '';
-      }, 1000)
+        this.actorEffect = "";
+      }, 1000);
     },
-    currentTurn(newValue, oldValue){
+    currentTurn(newValue, oldValue) {
       // console.log('turn changed', this.name, this.currentActor.name === this.name)
-      if(this.isActiveTurn){
+      if (this.isActiveTurn) {
         // update metal values
-        this.burningMetals?.forEach(metal => {
-          if(metal.currentBurn === metal.burnRate){
+        this.burningMetals?.forEach((metal) => {
+          if (metal.currentBurn === metal.burnRate) {
             metal.currentBurn = 0;
           } else {
             metal.currentBurn++;
           }
-        })
+        });
       }
     },
-    'burningMetals.length'(newValue, oldValue){
+    "burningMetals.length"(newValue, oldValue) {
       // console.log('watching', newValue, oldValue)
-      if(newValue > oldValue && newValue > 0){
+      if (newValue > oldValue && newValue > 0) {
         // console.log('setting interfval')
         this.burnInterval = window.setInterval(() => {
           // console.log('switching')
           this.isBurningMetal = !this.isBurningMetal;
-        }, 1000)
+        }, 1000);
       } else {
-        window.clearInterval(this.burnInterval)
+        window.clearInterval(this.burnInterval);
         this.isBurningMetal = false;
       }
     },
@@ -158,7 +162,7 @@ export default {
   components: {
     Sprite,
   },
-  created(){
+  created() {
     // window.setTimeout(() => {
     //   this.isTakingDamage = true
     //   this.damageTaken = 10;
@@ -166,31 +170,48 @@ export default {
     // window.setInterval(() => {
     //   this.isBurningMetal = !this.isBurningMetal;
     // }, 1000)
-  }
+  },
 };
 </script>
 <template>
   <div
     :style="{ top: top, left: left }"
-    :class="{ enemy: this.isEnemy, dead: points?.hp.current <= 0, 'damage': isTakingDamage, 'healing': isHealing, 'isometric': viewMode === 'isometric' }"
+    :class="{
+      enemy: this.isEnemy,
+      dead: points?.hp.current <= 0,
+      damage: isTakingDamage,
+      healing: isHealing,
+      isometric: viewMode === 'isometric',
+    }"
     class="actor"
   >
-    <div class="health-change" :class="{'damage-info': isTakingDamage, 'healing-info': isHealing}">
+    <div
+      class="health-change"
+      :class="{ 'damage-info': isTakingDamage, 'healing-info': isHealing }"
+    >
       <span v-if="isTakingDamage">
         -{{ damageTaken }}
         <!-- -4 -->
       </span>
-      <span v-if="isHealing">
-        +{{ healAmount }}
-      </span>
+      <span v-if="isHealing"> +{{ healAmount }} </span>
       <span v-if="actorEffect">
         {{ actorEffect }}
       </span>
     </div>
-    <div class="sprite-wrapper" :class="{'damage-shake': isTakingDamage}">
+    <div class="sprite-wrapper" :class="{ 'damage-shake': isTakingDamage }">
       <Sprite :spritesheet="sprite" :pose="pose"></Sprite>
-      <Sprite class="blur-sprite" :class="{'blur-sprite-show': isBurningMetal}" :spritesheet="sprite" :pose="pose"></Sprite>
-      <Sprite class="blur-sprite-outline" :class="{'blur-sprite-show': isBurningMetal}" :spritesheet="sprite" :pose="pose"></Sprite>
+      <Sprite
+        class="blur-sprite"
+        :class="{ 'blur-sprite-show': isBurningMetal }"
+        :spritesheet="sprite"
+        :pose="pose"
+      ></Sprite>
+      <Sprite
+        class="blur-sprite-outline"
+        :class="{ 'blur-sprite-show': isBurningMetal }"
+        :spritesheet="sprite"
+        :pose="pose"
+      ></Sprite>
     </div>
     <!-- <span>{{ currentHeight }}</span> -->
   </div>
@@ -207,7 +228,7 @@ export default {
 
   position: absolute;
   pointer-events: none;
-  transition: 1s top, 1s left, .4s filter;
+  transition: 1s top, 1s left, 0.4s filter;
   transform: scale(1.5);
 
   /* isometric */
@@ -215,7 +236,8 @@ export default {
   /* transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2); */
 }
 .actor.isometric {
-  transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(.5) scaleY(2);
+  transform: scaleX(3) scaleY(3) rotate(-45deg) translateY(-20px) scaleX(0.5)
+    scaleY(2);
 }
 
 .blur-sprite {
@@ -244,7 +266,7 @@ export default {
 
 .sprite-wrapper {
   /* transition: 0.1s translate ease; */
-  animation-duration: .3s;
+  animation-duration: 0.3s;
   animation-timing-function: linear;
 }
 .damage-shake {
@@ -271,15 +293,15 @@ export default {
 
 .damage {
   /* filter: hue-rotate(49deg) saturate(2); */
-  filter: sepia() saturate(10000%) hue-rotate(40deg)
+  filter: sepia() saturate(10000%) hue-rotate(40deg);
 }
 .healing {
   /* filter: hue-rotate(49deg) saturate(2); */
-  filter: sepia() saturate(10000%) hue-rotate(240deg)
+  filter: sepia() saturate(10000%) hue-rotate(240deg);
 }
 
 .damage.sprite-container {
-  transform: translate(100px)
+  transform: translate(100px);
 }
 
 .enemy {
@@ -291,7 +313,7 @@ export default {
   font-size: 6px;
   position: absolute;
   top: -10px;
-  left: 6px
+  left: 6px;
 }
 
 .health-change.damage-info {
