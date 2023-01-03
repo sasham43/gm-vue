@@ -1,43 +1,52 @@
-import _ from 'lodash'
+import _ from "lodash";
 
-import {findDistance} from './highlight'
+import { findDistance } from "./highlight";
 
-export function highlightMovementTiles(tiles=[], start, range, openList=[], closedList=[], iteration=0){
+export function highlightMovementTiles(
+  tiles = [],
+  start,
+  range,
+  openList = [],
+  closedList = [],
+  iteration = 0
+) {
   // console.log('start', start, start.distanceFromStart)
   start.pos = `${start.x},${start.y}`;
   start.distanceFromStart =
     start.distanceFromStart == undefined ? 0 : start.distanceFromStart;
   // get tiles N, E, S, W of actor, push to array
-  let neighboringTiles = findNeighboringTiles(start, tiles).map(tile => {
-    return {      
-      pos: `${tile.x},${tile.y}`,
-      ...tile,
-      distanceFromStart: start.distanceFromStart + 1,
-    }
-  }).filter(tile => {
-    let exists = closedList.find(closed => {
-      return tile.pos === closed.pos;
+  let neighboringTiles = findNeighboringTiles(start, tiles)
+    .map((tile) => {
+      return {
+        pos: `${tile.x},${tile.y}`,
+        ...tile,
+        distanceFromStart: start.distanceFromStart + 1,
+      };
     })
-    return !exists
-  })
+    .filter((tile) => {
+      let exists = closedList.find((closed) => {
+        return tile.pos === closed.pos;
+      });
+      return !exists;
+    });
 
   openList = _.uniqBy([...openList, ...neighboringTiles], "pos");
   closedList = _.uniqBy([...closedList, start], "pos");
 
-  if(start.distanceFromStart > range){
-    console.log('reached limit')
-    return closedList.filter(tile => {
+  if (start.distanceFromStart > range) {
+    console.log("reached limit");
+    return closedList.filter((tile) => {
       return tile.distanceFromStart > 0 && tile.distanceFromStart <= range;
     });
   } else {
     let nextTile = openList.shift();
 
-    return highlightMovementTiles(tiles, nextTile, range, openList, closedList)
+    return highlightMovementTiles(tiles, nextTile, range, openList, closedList);
   }
 
   // if(iteration <= range){
   //   neighboringTiles.forEach(tile => {
-      
+
   //     // return highlightMovementTiles(tiles, tile, range, iteration+1)
   //   })
   // } else {
@@ -47,7 +56,14 @@ export function highlightMovementTiles(tiles=[], start, range, openList=[], clos
   // return
 }
 
-export function pathfinding(tiles=[],start, target, openList = [], closedList = [], loopNumber = 0) {
+export function pathfinding(
+  tiles = [],
+  start,
+  target,
+  openList = [],
+  closedList = [],
+  loopNumber = 0
+) {
   // make sure compatible values are set
   start.pos = `${start.x},${start.y}`;
   start.distanceFromStart =
@@ -84,8 +100,8 @@ export function pathfinding(tiles=[],start, target, openList = [], closedList = 
       totalScore,
     };
   });
-//   openList.sort(this.chooseLowestTotalScore);
-    openList = _.sortBy(openList, 'totalScore')
+  //   openList.sort(this.chooseLowestTotalScore);
+  openList = _.sortBy(openList, "totalScore");
 
   // choose  tile from openList lowest F score, add to closedList, retrieve adjacent squares from it
   let nextTile = openList.shift();
@@ -106,65 +122,59 @@ export function pathfinding(tiles=[],start, target, openList = [], closedList = 
 }
 
 export function findNeighboringTiles(actor, tiles) {
-    let neighbors = [];
+  let neighbors = [];
 
-    // console.log('y tho', tiles, actor)
+  // console.log('y tho', tiles, actor)
 
-    if (tiles[actor.y][actor.x + 1]) {
+  if (tiles[actor.y][actor.x + 1]) {
     neighbors.push({
-        x: actor.x + 1,
-        y: actor.y,
+      x: actor.x + 1,
+      y: actor.y,
     });
-    }
-    if (tiles[actor.y][actor.x - 1]) {
+  }
+  if (tiles[actor.y][actor.x - 1]) {
     neighbors.push({
-        x: actor.x - 1,
-        y: actor.y,
+      x: actor.x - 1,
+      y: actor.y,
     });
-    }
-    if (
-    tiles[actor.y + 1] != undefined &&
-    tiles[actor.y + 1][actor.x]
-    ) {
+  }
+  if (tiles[actor.y + 1] != undefined && tiles[actor.y + 1][actor.x]) {
     neighbors.push({
-        x: actor.x,
-        y: actor.y + 1,
+      x: actor.x,
+      y: actor.y + 1,
     });
-    }
-    if (
-    tiles[actor.y - 1] != undefined &&
-    tiles[actor.y - 1][actor.x]
-    ) {
+  }
+  if (tiles[actor.y - 1] != undefined && tiles[actor.y - 1][actor.x]) {
     neighbors.push({
-        x: actor.x,
-        y: actor.y - 1,
+      x: actor.x,
+      y: actor.y - 1,
     });
-    }
+  }
 
-    return neighbors;
+  return neighbors;
 }
 
 export function findShortestPath(list) {
-    let sorted = _.sortBy(list, "distanceFromStart").reverse();
-    let start = sorted.shift();
-    let path = findNextPathStep(start, [], list);
-    return path;
+  let sorted = _.sortBy(list, "distanceFromStart").reverse();
+  let start = sorted.shift();
+  let path = findNextPathStep(start, [], list);
+  return path;
 }
 
 export function findNextPathStep(start, pathList, closedList) {
-    let nextSteps = closedList.filter((tile) => {
-        return tile.distanceFromStart == start.distanceFromStart - 1;
-    });
+  let nextSteps = closedList.filter((tile) => {
+    return tile.distanceFromStart == start.distanceFromStart - 1;
+  });
 
-    let next = nextSteps.find((step) => {
+  let next = nextSteps.find((step) => {
     let distance = findDistance(start.x, start.y, step.x, step.y).total;
-        return distance === 1;
-    });
+    return distance === 1;
+  });
 
-    pathList.push(start);
-    if (next.distanceFromStart === 0) {
-        return pathList;
-    } else {
-        return findNextPathStep(next, pathList, closedList);
-    }
+  pathList.push(start);
+  if (next.distanceFromStart === 0) {
+    return pathList;
+  } else {
+    return findNextPathStep(next, pathList, closedList);
+  }
 }

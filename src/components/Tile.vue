@@ -14,8 +14,8 @@ export default {
     viewMode: String,
   },
   computed: {
-    translate(){
-      return `translate(${this.height * 50}px ${this.height * 50}px)`
+    translate() {
+      return `translate(${this.height * 50}px ${this.height * 50}px)`;
     },
     playerX() {
       return this.player.x;
@@ -26,8 +26,8 @@ export default {
       return this.player.y;
       // return this.player?.pos.split(",")[1];
     },
-    isHighlightedFly(){
-      if(this.mode == 'fly'){
+    isHighlightedFly() {
+      if (this.mode == "fly") {
         return isHighlightedAttack(
           "ranged",
           this.x,
@@ -36,20 +36,19 @@ export default {
           // this.playerY,
           this.currentActor.x,
           this.currentActor.y,
-          this.currentActor.selectedAttack.range,
+          this.currentActor.selectedAttack.range
         );
       }
     },
     isHighlightedMove() {
-      if (this.mode != "player-move" && this.mode != 'enemy-move') return false;
+      if (this.mode != "player-move" && this.mode != "enemy-move") return false;
 
-      let isHighlighted = this.highlightedMoveTiles.find(tile => {
+      let isHighlighted = this.highlightedMoveTiles.find((tile) => {
         return tile.x === this.x && tile.y === this.y;
-      })
+      });
       // console.log('is hhh', isHighlighted, this.x, this.y, this.highlightedMoveTiles)
 
       return isHighlighted;
-
 
       // // console.log("player mode", this.mode);
 
@@ -75,7 +74,7 @@ export default {
         // this.playerY,
         this.currentActor.x,
         this.currentActor.y,
-        this.currentActor.selectedAttack.range,        
+        this.currentActor.selectedAttack.range
       );
     },
     isHighlightedMeleeAttack() {
@@ -88,44 +87,44 @@ export default {
         // this.playerY
 
         this.currentActor.x,
-        this.currentActor.y,
+        this.currentActor.y
       );
     },
     isHighlightedAttack() {
       return this.isHighlightedMeleeAttack || this.isHighlightedRangedAttack;
     },
-    leftTranslate(){
-      if(this.height == 1){
-        return '17.5'
-      } else if (this.height == 2){
-        return '67'
-      }
-    },
-    rightTranslate(){
+    leftTranslate() {
       if (this.height == 1) {
-        return 'translate(14px, -77px)'
-      } else if (this.height == 2){
-        return 'translate(-38px, -128px)'
+        return "17.5";
+      } else if (this.height == 2) {
+        return "67";
       }
     },
-    heightTranslate(){
-      if(this.viewMode === 'isometric'){
-        return `translate(-${this.height * 50}px, -${this.height * 50}px)`
-      } else {
-        return `translate(0px)`
+    rightTranslate() {
+      if (this.height == 1) {
+        return "translate(14px, -77px)";
+      } else if (this.height == 2) {
+        return "translate(-38px, -128px)";
       }
     },
-    heightFilter(){
-      if(this.viewMode === 'isometric'){
-        return ''
+    heightTranslate() {
+      if (this.viewMode === "isometric") {
+        return `translate(-${this.height * 50}px, -${this.height * 50}px)`;
       } else {
-        return `brightness(${(this.height * 20) + 50}%)`
+        return `translate(0px)`;
       }
-    }
+    },
+    heightFilter() {
+      if (this.viewMode === "isometric") {
+        return "";
+      } else {
+        return `brightness(${this.height * 20 + 50}%)`;
+      }
+    },
   },
-  mounted(){
+  mounted() {
     // console.log("height", this.height)
-  }
+  },
 };
 </script>
 
@@ -136,19 +135,34 @@ export default {
       :class="{
         'empty-tile': tile === 0,
         'filled-tile': tile === 1,
-        'enemy': currentActor.enemy,
+        enemy: currentActor.enemy,
         'highlighted-move-tile': isHighlightedMove,
         'highlighted-move-tile': isHighlightedFly,
         'highlighted-attack-tile': isHighlightedAttack,
       }"
-      :style="{ 'transform': heightTranslate, 'filter': heightFilter }"
+      :style="{ transform: heightTranslate, filter: heightFilter }"
     >
       <!-- <span class="debug"> {{ row }} - {{ col }} </span> -->
       <!-- <span>{{ `translate(${height * 50}px ${height * 50}px)` }}</span> -->
     </div>
-    <div v-if="height > 0 && viewMode === 'isometric'" class="left-side-tile" :style="{ 'transform': `translate(-${leftTranslate}px, -${height * 50}px) skew(45deg, 0deg)`, 'filter': heightFilter }"></div>
-    <div v-if="height > 0 && viewMode === 'isometric'" class="right-side-tile"
-      :style="{ 'transform': `${rightTranslate} skew(0deg, 45deg)`, 'filter': heightFilter }"></div>
+    <div
+      v-if="height > 0 && viewMode === 'isometric'"
+      class="left-side-tile"
+      :style="{
+        transform: `translate(-${leftTranslate}px, -${
+          height * 50
+        }px) skew(45deg, 0deg)`,
+        filter: heightFilter,
+      }"
+    ></div>
+    <div
+      v-if="height > 0 && viewMode === 'isometric'"
+      class="right-side-tile"
+      :style="{
+        transform: `${rightTranslate} skew(0deg, 45deg)`,
+        filter: heightFilter,
+      }"
+    ></div>
   </div>
 </template>
 
@@ -169,11 +183,11 @@ export default {
 }
 .right-side-tile,
 .left-side-tile {
-    width: 50px;
-    height: 50px;
-    background-color: green;
-    /* transform: translate(-67px, -100px) skew(44deg, 0deg); */
-    position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: green;
+  /* transform: translate(-67px, -100px) skew(44deg, 0deg); */
+  position: absolute;
 }
 /* .right-side-tile {
   background-color: red;

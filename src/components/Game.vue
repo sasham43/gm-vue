@@ -7,9 +7,9 @@ import {
   findDistance,
   isHighlightedMove,
 } from "../utils/highlight";
-import { pathfinding, highlightMovementTiles } from '../utils/movement'
-import rollDice, {findModifier} from "../utils/dice";
-import allomancy from '../utils/powers'
+import { pathfinding, highlightMovementTiles } from "../utils/movement";
+import rollDice, { findModifier } from "../utils/dice";
+import allomancy from "../utils/powers";
 
 import _ from "lodash";
 
@@ -49,12 +49,12 @@ export default {
         points: {
           hp: {
             current: 10,
-            max: 10
+            max: 10,
           },
           mp: {
             current: 5,
             max: 5,
-          }
+          },
         },
         // health: 10,
         // healthMax: 10,
@@ -73,11 +73,11 @@ export default {
         ac: 15,
         items: [
           {
-            name: 'health potion',
-            effect: 'heal',
-            amount: '1d4',
-            target: 'self',
-          }
+            name: "health potion",
+            effect: "heal",
+            amount: "1d4",
+            target: "self",
+          },
         ],
         // allomancy: [
         //   {
@@ -89,19 +89,19 @@ export default {
         burningMetals: [],
         attacks: [
           {
-            type: 'melee',
-            name: 'sword',
-            stat: 'str',
-            damage: '1d8'
+            type: "melee",
+            name: "sword",
+            stat: "str",
+            damage: "1d8",
           },
           {
-            type: 'ranged',
-            name: 'dart',
-            stat: 'dex',
-            damage: '1d4',
+            type: "ranged",
+            name: "dart",
+            stat: "dex",
+            damage: "1d4",
             range: 2,
-          }
-        ]
+          },
+        ],
       },
       //   playerPos: "1,2",
       mode: "free",
@@ -117,7 +117,7 @@ export default {
           points: {
             hp: {
               current: 4,
-              max: 4
+              max: 4,
             },
           },
           // health: 4,
@@ -135,11 +135,11 @@ export default {
           ac: 12,
           attacks: [
             {
-              type: 'melee',
-              name: 'axe',
-              damage: '1d6'
-            }
-          ]
+              type: "melee",
+              name: "axe",
+              damage: "1d6",
+            },
+          ],
         },
         {
           enemy: true,
@@ -153,7 +153,7 @@ export default {
           points: {
             hp: {
               current: 4,
-              max: 4
+              max: 4,
             },
           },
           initiative: 0,
@@ -171,12 +171,12 @@ export default {
           ac: 12,
           attacks: [
             {
-              type: 'ranged',
-              name: 'bow & arrow',
-              damage: '1d6',
+              type: "ranged",
+              name: "bow & arrow",
+              damage: "1d6",
               range: 2,
-            }
-          ]
+            },
+          ],
         },
       ],
       turnOrder: [],
@@ -199,10 +199,10 @@ export default {
         y: 0,
       },
       // showAbilities: false,
-      showButtons: '',
+      showButtons: "",
       highlightedMoveTiles: [],
       // viewMode: 'top-down',
-      viewMode: 'isometric',
+      viewMode: "isometric",
       burnRate: 3,
     };
   },
@@ -218,21 +218,21 @@ export default {
     currentTile() {
       return this.tiles[this.playerX][this.playerY];
     },
-    showResetMapPanButton(){
-      let x = this.mapPan.x//.replace('px', '')
-      let y = this.mapPan.y//.replace('px', '')
+    showResetMapPanButton() {
+      let x = this.mapPan.x; //.replace('px', '')
+      let y = this.mapPan.y; //.replace('px', '')
 
-      if(x != 0 && y != 0){
+      if (x != 0 && y != 0) {
         return true;
       } else {
         return false;
       }
     },
-    showAbilities(){
-      return this.showButtons == 'abilities'
+    showAbilities() {
+      return this.showButtons == "abilities";
     },
-    showItems(){
-      return this.showButtons == 'items'
+    showItems() {
+      return this.showButtons == "items";
     },
     showMetals(){
       return this.showButtons == 'metals'
@@ -240,7 +240,6 @@ export default {
   },
   methods: {
     nextTurn() {
-
       this.currentActorAttacked = false;
       this.currentActorMoved = false;
 
@@ -261,16 +260,19 @@ export default {
         this.currentTurn -= 1;
       }
     },
-    playerAttack(){
-          if(this.currentActor.selectedAttack.type === 'metal'){
-            this.burnMetal(this.player.selectedAttack, this.player.selectedAttack.name)
-          } else if (this.currentActor.selectedAttack.type === 'fly') {
-            this.setMode('fly')
-          } else {
-            this.performAttack(this.player, this.currentDefender)
-            // this.currentDefender.health -= this.player.attackPower;
-            this.currentActorAttacked = true;
-          }
+    playerAttack() {
+      if (this.currentActor.selectedAttack.type === "metal") {
+        this.burnMetal(
+          this.player.selectedAttack,
+          this.player.selectedAttack.name
+        );
+      } else if (this.currentActor.selectedAttack.type === "fly") {
+        this.setMode("fly");
+      } else {
+        this.performAttack(this.player, this.currentDefender);
+        // this.currentDefender.health -= this.player.attackPower;
+        this.currentActorAttacked = true;
+      }
     },
     onTileSelect(tile, row, col, isNavigable) {
       let selectPos = `${col},${row}`;
@@ -319,8 +321,7 @@ export default {
           // this.player.attackPower = this.player.rangedPower;
           this.displayAttackView();
 
-
-          console.log('attack', enemy)
+          console.log("attack", enemy);
         }
       } else if (this.mode === 'fly'){
         this.flyPlayer(col, row);
@@ -334,7 +335,7 @@ export default {
         return `${enemy.x},${enemy.y}` === selectPos;
       });
     },
-    flyPlayer(x, y){
+    flyPlayer(x, y) {
       this.player.x = x;
       this.player.y = y;
     },
@@ -347,7 +348,7 @@ export default {
       // if (this.mode === mode) {
       //   this.mode = "free";
       // } else {
-        this.mode = mode;
+      this.mode = mode;
       // }
     },
     rollInitiative() {
@@ -376,23 +377,26 @@ export default {
       //   this.nextTurn();
       // }
       // console.log('watch current turn', newValue)
-      console.log('currentAcot', this.turnOrder, newValue, currentActor)
+      console.log("currentAcot", this.turnOrder, newValue, currentActor);
 
       this.currentActor = currentActor;
-      this.currentDefender = {}
+      this.currentDefender = {};
 
       if (currentActor.player) {
-
         // wait for player input
         console.log("player turn");
-        this.mode = 'player-turn'
+        this.mode = "player-turn";
       } else {
         // AI actions
         console.log("enemy turn");
         currentActor.distanceFromStart = 0;
         this.enemyTurn(currentActor);
       }
-      this.highlightedMoveTiles = highlightMovementTiles(this.tiles, currentActor, currentActor.speed)
+      this.highlightedMoveTiles = highlightMovementTiles(
+        this.tiles,
+        currentActor,
+        currentActor.speed
+      );
       // console.log('we can move onto these', this.highlightedMoveTiles)
 
       // update current actor turn values
@@ -410,14 +414,12 @@ export default {
       //     this.currentActor.availablePowers = []
       //   }
       // }
-
-
     },
     enemyTurn(actor) {
       // console.log('jjjj', this.showEndScreen)
-      if(this.showEndScreen) return;
+      if (this.showEndScreen) return;
       this.currentDefender = this.player;
-      let attack = actor.attacks[0]
+      let attack = actor.attacks[0];
       actor.selectedAttack = attack;
       // check if can attack player
       if (attack.type == "ranged") {
@@ -436,7 +438,7 @@ export default {
             // this.nextTurn();
             this.currentActorAttacked = true; // attack is impossible
           } else {
-            this.setMode('enemy-move')
+            this.setMode("enemy-move");
             this.enemyChoice(() => {
               this.moveTowardsPlayer(actor);
               this.currentActorMoved = true;
@@ -473,7 +475,7 @@ export default {
             // this.nextTurn();
             this.currentActorAttacked = true; // attack is impossible
           } else {
-            this.setMode('enemy-move')
+            this.setMode("enemy-move");
             this.enemyChoice(() => {
               this.moveTowardsPlayer(actor);
               this.currentActorMoved = true;
@@ -501,28 +503,28 @@ export default {
     enemyChoice(action) {
       let enemyDecisionSpeed = 2000;
 
-      window.clearTimeout(this.enemyChoiceTimeout)
+      window.clearTimeout(this.enemyChoiceTimeout);
 
       this.enemyChoiceTimeout = window.setTimeout(() => {
         // console.log("choice");
         action();
       }, enemyDecisionSpeed);
     },
-    performAttack(attacker, defender){
+    performAttack(attacker, defender) {
       let attack = attacker.selectedAttack;
-      let stat = attacker.stats[attack.stat]
+      let stat = attacker.stats[attack.stat];
 
-      let modifier = findModifier(stat)
-      let attackRoll = rollDice('1d20', modifier)
-      if(attackRoll.total >= defender.ac){
-        let damage = rollDice(attack.damage, modifier)
+      let modifier = findModifier(stat);
+      let attackRoll = rollDice("1d20", modifier);
+      if (attackRoll.total >= defender.ac) {
+        let damage = rollDice(attack.damage, modifier);
         // console.log('hit!', damage)
 
         // defender.health -= damage.total;
         defender.points.hp.current -= damage.total;
       } else {
         // console.log('miss')
-        defender.effect = 'miss'
+        defender.effect = "miss";
       }
       // console.log('performing attack', stat, modifier, attackRoll)
     },
@@ -547,7 +549,7 @@ export default {
         actor.x = path[step].x;
         actor.y = path[step].y;
 
-        if (step == path.length - 1 || step == (range-1)) {
+        if (step == path.length - 1 || step == range - 1) {
           window.clearInterval(steppingInterval);
         } else {
           step += 1;
@@ -570,132 +572,135 @@ export default {
         this.nextTurn();
       }
     },
-    displayAttackView(){
+    displayAttackView() {
       // here
       this.showAttackInfo = true;
     },
-    filterDead(){
+    filterDead() {
       // console.log('filtering dead')
-      this.turnOrder = this.turnOrder.filter(actor => {
+      this.turnOrder = this.turnOrder.filter((actor) => {
         // console.log('actor health', actor.health)
         return actor.points.hp.current > 0;
-      })
-      if(this.currentTurn >= this.turnOrder.length){
+      });
+      if (this.currentTurn >= this.turnOrder.length) {
         this.currentTurn = 0;
       }
       // console.log('filtered dead', JSON.stringify(this.turnOrder))
 
-      let livingPlayers = this.turnOrder.filter(actor => {
-        return actor.player
-      })
-      let livingEnemies = this.turnOrder.filter(actor => {
-        return actor.enemy
-      })
+      let livingPlayers = this.turnOrder.filter((actor) => {
+        return actor.player;
+      });
+      let livingEnemies = this.turnOrder.filter((actor) => {
+        return actor.enemy;
+      });
 
       // console.log('living', livingEnemies.length, livingPlayers.length)
 
-      if(livingEnemies.length == 0){
-        this.endBattle('victory')
-      } else if (livingPlayers.length == 0){
-        this.endBattle('defeat')
+      if (livingEnemies.length == 0) {
+        this.endBattle("victory");
+      } else if (livingPlayers.length == 0) {
+        this.endBattle("defeat");
       }
     },
-    endBattle(result){
+    endBattle(result) {
       this.endResult = result;
       window.setTimeout(() => {
         this.showEndScreen = true;
       }, 2000);
     },
-    hideEndScreen(){
+    hideEndScreen() {
       this.showEndScreen = false;
-      this.endResult = '';
-      this.turnOrder = []
+      this.endResult = "";
+      this.turnOrder = [];
     },
-    onMouseDown(event){
+    onMouseDown(event) {
       // console.log('on mouse down', document.body.classList)
       this.isMouseDown = true;
 
       // capture mouse position
       this.mouseDownPoint = {
-          x: `${event.pageX}`,
-          y: `${event.pageY}`
-        }
+        x: `${event.pageX}`,
+        y: `${event.pageY}`,
+      };
 
       // document.body.addClass('grabbing')
-      document.body.classList = ['grabbing']
+      document.body.classList = ["grabbing"];
     },
-    onMouseUp(event){
+    onMouseUp(event) {
       // console.log('on mouse Up')
       this.isMouseDown = false;
       // document.body.removeClass('grabbing')
 
-      document.body.classList = []
+      document.body.classList = [];
     },
-    onMouseMove(event){
-      if(this.isMouseDown){
+    onMouseMove(event) {
+      if (this.isMouseDown) {
         // fix this, gets weird if you pan to the right
         let x, y;
-        let modifier = ''
-        if(this.mouseDownPoint.x > event.pageX){
-          x = this.mouseDownPoint.x - event.pageX
-          modifier = '-'
+        let modifier = "";
+        if (this.mouseDownPoint.x > event.pageX) {
+          x = this.mouseDownPoint.x - event.pageX;
+          modifier = "-";
         } else {
-          x = event.pageX - this.mouseDownPoint.x
+          x = event.pageX - this.mouseDownPoint.x;
           // modifier = ''
         }
-        if(this.mouseDownPoint.y > event.pageY){
-          y = this.mouseDownPoint.y - event.pageY
-          modifier = '-'
+        if (this.mouseDownPoint.y > event.pageY) {
+          y = this.mouseDownPoint.y - event.pageY;
+          modifier = "-";
         } else {
-          y = event.pageY - this.mouseDownPoint.y
+          y = event.pageY - this.mouseDownPoint.y;
           // modifier = ''
         }
 
         this.mapPan = {
           x: `${modifier}${x}px`,
-          y: `${modifier}${y}px`
-        }
+          y: `${modifier}${y}px`,
+        };
       }
     },
-    resetMapPosition(){
+    resetMapPosition() {
       this.mapPan = {
-        x: '0',
-        y: '0'
-      }
+        x: "0",
+        y: "0",
+      };
     },
-    displayAbilities(){
+    displayAbilities() {
       // this.showAbilities = true;
-      this.showButtons = 'abilities'
+      this.showButtons = "abilities";
     },
-    hideAbilities(){
+    hideAbilities() {
       // this.showAbilities = false;
-      this.showButtons = ''
+      this.showButtons = "";
     },
-    displayItems(){
+    displayItems() {
       // this.showItems = true;
-      this.showButtons = 'items'
+      this.showButtons = "items";
     },
-    hideItems(){
+    hideItems() {
       // this.showAbilities = false;
-      this.showButtons = ''
+      this.showButtons = "";
     },
-    selectAttack(attack){
-      console.log('attack', attack)
+    selectAttack(attack) {
+      console.log("attack", attack);
       this.player.selectedAttack = attack;
       this.mode = attack.type;
     },
-    selectItem(item){
+    selectItem(item) {
       this.player.selectedItem = item;
       this.mode = item.effect;
-      if(item.target == 'self'){
-        this.currentDefender = this.player
+      if (item.target == "self") {
+        this.currentDefender = this.player;
       }
     },
-    playerItem(item){
-      if(item.effect == 'heal'){
+    playerItem(item) {
+      if (item.effect == "heal") {
         let amount = rollDice(item.amount).total;
 
-        if(this.player.points.hp.current + amount > this.player.points.hp.max){
+        if (
+          this.player.points.hp.current + amount >
+          this.player.points.hp.max
+        ) {
           this.player.points.hp.current = this.player.points.hp.max;
         } else {
           this.player.points.hp.current += amount;
@@ -704,18 +709,18 @@ export default {
         this.currentActorAttacked = true;
       }
     },
-    setViewMode(mode){
-      console.log('mode', mode)
+    setViewMode(mode) {
+      console.log("mode", mode);
       this.viewMode = mode;
     },
-    burnMetal(power, metal){
+    burnMetal(power, metal) {
       // console.log('we got it', power, allomancy[metal], allomancy)
-      this.player.availablePowers = allomancy[metal].abilities
+      this.player.availablePowers = allomancy[metal].abilities;
 
       // instantiate
       power.details.currentBurn = 0;
       this.player.points.mp.current--;
-      this.player.burningMetals.push(power.details)
+      this.player.burningMetals.push(power.details);
     },
     displayMetals(){
       // this.showMetals = true;
@@ -724,8 +729,8 @@ export default {
     hideMetals(){
       // this.showMetals = false;
     },
-    selectMetal(metal, name){
-      console.log('metal', metal)
+    selectMetal(metal, name) {
+      console.log("metal", metal);
       this.player.selectedAttack = metal;
       this.player.selectedAttack.name = name;
       this.player.selectedAttack.type = 'metal';
@@ -742,28 +747,31 @@ export default {
       return this.watchCurrentTurn(newValue, oldValue);
     },
     currentActorAttacked() {
-      this.filterDead()
+      this.filterDead();
       this.watchCurrentActorActions();
     },
     currentActorMoved() {
-      this.filterDead()
+      this.filterDead();
       this.watchCurrentActorActions();
-    }
+    },
   },
   components: { TileMap, Actor, Sprite },
-  mounted(){
+  mounted() {
     // console.log('game create')
 
-    document.body.addEventListener('mousedown', this.onMouseDown)
-    document.body.addEventListener('mouseup', this.onMouseUp)
-    document.body.addEventListener('mousemove', this.onMouseMove)
-  }
+    document.body.addEventListener("mousedown", this.onMouseDown);
+    document.body.addEventListener("mouseup", this.onMouseUp);
+    document.body.addEventListener("mousemove", this.onMouseMove);
+  },
 };
 </script>
 
 <template>
-
-  <button v-if="showResetMapPanButton" @click="resetMapPosition" class="reset-map-position">
+  <button
+    v-if="showResetMapPanButton"
+    @click="resetMapPosition"
+    class="reset-map-position"
+  >
     Reset Map
   </button>
 
@@ -774,7 +782,11 @@ export default {
     <button @click="rollInitiative()">battle</button>
     <button @click="nextTurn()">> turn</button>
     <div>
-      <div class="turn" :class="{ 'current-turn': currentTurn == turn }" v-for="(actor, turn) in turnOrder">
+      <div
+        class="turn"
+        :class="{ 'current-turn': currentTurn == turn }"
+        v-for="(actor, turn) in turnOrder"
+      >
         {{ actor.name }}
       </div>
     </div>
@@ -835,7 +847,10 @@ export default {
         <button @click="selectAttack(attack)" v-for="attack in player.attacks">
           {{ attack.name }} - {{ attack.type }}
         </button>
-        <button @click="selectAttack(power)" v-for="power in player.availablePowers">
+        <button
+          @click="selectAttack(power)"
+          v-for="power in player.availablePowers"
+        >
           {{ power.name }}
         </button>
       </div>
@@ -844,13 +859,19 @@ export default {
           {{ item.name }} - {{ item.effect }}
         </button>
       </div>
-      <button @click="displayAbilities()" :disabled="currentActor.player && currentActorAttacked">
+      <button
+        @click="displayAbilities()"
+        :disabled="currentActor.player && currentActorAttacked"
+      >
         abilities
       </button>
       <button @click="displayMetals()" :disabled="!currentActor.player">
         metals
       </button>
-      <button @click="displayItems()" :disabled="currentActor.player && currentActorAttacked">
+      <button
+        @click="displayItems()"
+        :disabled="currentActor.player && currentActorAttacked"
+      >
         items
       </button>
       <button @click="setMode('player-move')" :disabled="currentActor.player && currentActorMoved">player move</button>
@@ -865,14 +886,22 @@ export default {
       </button>
     </div>
 
-    <div class="tilemap" :style="{top: mapPan.y, left: mapPan.x}" :class="{'grabbing': isMouseDown, 'isometric': viewMode === 'isometric', 'top-down': viewMode === 'top-down'}">
+    <div
+      class="tilemap"
+      :style="{ top: mapPan.y, left: mapPan.x }"
+      :class="{
+        grabbing: isMouseDown,
+        isometric: viewMode === 'isometric',
+        'top-down': viewMode === 'top-down',
+      }"
+    >
       <TileMap
         @tile-select="onTileSelect"
         :player="player"
         :currentActor="currentActor"
         :tiles="tiles"
         :mode="mode"
-        :heightMap="heightMap" 
+        :heightMap="heightMap"
         :highlightedMoveTiles="highlightedMoveTiles"
         :viewMode="viewMode"
       ></TileMap>
@@ -881,36 +910,61 @@ export default {
     </div>
   </div>
 
-
   <div class="attack-view-container">
-    <div class="attacker" :class="{'player-view': currentActor.player, 'enemy-view': currentActor.enemy, 'visible-attacker': currentActor.name}">
-
+    <div
+      class="attacker"
+      :class="{
+        'player-view': currentActor.player,
+        'enemy-view': currentActor.enemy,
+        'visible-attacker': currentActor.name,
+      }"
+    >
       <div class="attack-view-upper">
         <div class="attack-view-sprite-container">
           <Sprite :spritesheet="currentActor.sprite" pose="standing"></Sprite>
         </div>
-  
-        <div v-if="currentActor.selectedAttack && !currentActorAttacked" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+
+        <div
+          v-if="currentActor.selectedAttack && !currentActorAttacked"
+          class="attack-info-container"
+          :class="{ 'show-attack-info': showAttackInfo }"
+        >
           <div class="attack-info">
-            {{ currentActor.selectedAttack.name }} - {{ currentActor.selectedAttack.type }}
+            {{ currentActor.selectedAttack.name }} -
+            {{ currentActor.selectedAttack.type }}
           </div>
           <div v-if="currentActor.selectedAttack?.abilities">
-            <span class="metal-ability" v-for="ability in currentActor.selectedAttack?.abilities">
-              {{  ability.name }}
+            <span
+              class="metal-ability"
+              v-for="ability in currentActor.selectedAttack?.abilities"
+            >
+              {{ ability.name }}
             </span>
           </div>
           <div class="attack-info">
             <button class="attack-button" @click="playerAttack()">
-              {{currentActor.selectedAttack.label ? currentActor.selectedAttack.label : 'Attack'}}
+              {{
+                currentActor.selectedAttack.label
+                  ? currentActor.selectedAttack.label
+                  : "Attack"
+              }}
             </button>
           </div>
         </div>
-        <div v-if="currentActor.selectedItem && !currentActorAttacked" class="attack-info-container" :class="{'show-attack-info': showAttackInfo}">
+        <div
+          v-if="currentActor.selectedItem && !currentActorAttacked"
+          class="attack-info-container"
+          :class="{ 'show-attack-info': showAttackInfo }"
+        >
           <div class="attack-info">
-            {{ currentActor.selectedItem.name }} - {{ currentActor.selectedItem.effect }}
+            {{ currentActor.selectedItem.name }} -
+            {{ currentActor.selectedItem.effect }}
           </div>
           <div class="attack-info">
-            <button class="attack-button" @click="playerItem(currentActor.selectedItem)">
+            <button
+              class="attack-button"
+              @click="playerItem(currentActor.selectedItem)"
+            >
               Use
             </button>
           </div>
@@ -921,18 +975,47 @@ export default {
         <div>
           {{ currentActor.name }}
         </div>
-        <div class="hp" :style="{ 'background': `linear-gradient(to right, red ${(currentActor.points?.hp.current / currentActor.points?.hp.max) * 100}%, white .1%)`}">
-          HP: {{ currentActor.points?.hp.current }} / {{ currentActor.points?.hp.max }}
+        <div
+          class="hp"
+          :style="{
+            background: `linear-gradient(to right, red ${
+              (currentActor.points?.hp.current / currentActor.points?.hp.max) *
+              100
+            }%, white .1%)`,
+          }"
+        >
+          HP: {{ currentActor.points?.hp.current }} /
+          {{ currentActor.points?.hp.max }}
         </div>
-        <div class="hp" v-if="currentActor.points?.mp" :style="{ 'background': `linear-gradient(to right, blue ${(currentActor.points?.mp.current / currentActor.points?.mp.max) * 100}%, white .1%)`}">
-          MP: {{ currentActor.points?.mp.current }} / {{ currentActor.points?.mp.max }}
+        <div
+          class="hp"
+          v-if="currentActor.points?.mp"
+          :style="{
+            background: `linear-gradient(to right, blue ${
+              (currentActor.points?.mp.current / currentActor.points?.mp.max) *
+              100
+            }%, white .1%)`,
+          }"
+        >
+          MP: {{ currentActor.points?.mp.current }} /
+          {{ currentActor.points?.mp.max }}
         </div>
       </div>
     </div>
-    <div class="defender" :class="{'player-view': currentDefender.player, 'enemy-view': currentDefender.enemy, 'visible-defender': currentDefender.name}">
+    <div
+      class="defender"
+      :class="{
+        'player-view': currentDefender.player,
+        'enemy-view': currentDefender.enemy,
+        'visible-defender': currentDefender.name,
+      }"
+    >
       <div class="defend-view-upper">
         <div class="defend-view-sprite-container">
-          <Sprite :spritesheet="currentDefender.sprite" pose="standing"></Sprite>
+          <Sprite
+            :spritesheet="currentDefender.sprite"
+            pose="standing"
+          ></Sprite>
         </div>
       </div>
 
@@ -940,17 +1023,34 @@ export default {
         <div>
           {{ currentDefender.name }}
         </div>
-        <div class="hp"
-          :style="{ 'background': `linear-gradient(to right, red ${(currentDefender.points?.hp.current / currentDefender.points?.hp.max) * 100}%, white .1%)`}">
-          HP: {{ currentDefender.points?.hp.current }} / {{ currentDefender.points?.hp.max }}
+        <div
+          class="hp"
+          :style="{
+            background: `linear-gradient(to right, red ${
+              (currentDefender.points?.hp.current /
+                currentDefender.points?.hp.max) *
+              100
+            }%, white .1%)`,
+          }"
+        >
+          HP: {{ currentDefender.points?.hp.current }} /
+          {{ currentDefender.points?.hp.max }}
         </div>
-        <div class="hp" v-if="currentDefender.points?.mp"
-          :style="{ 'background': `linear-gradient(to right, blue ${(currentDefender.points?.mp.current / currentDefender.points?.mp.max) * 100}%, white .1%)`}">
-          MP: {{ currentDefender.points?.mp.current }} / {{ currentDefender.points?.mp.max }}
+        <div
+          class="hp"
+          v-if="currentDefender.points?.mp"
+          :style="{
+            background: `linear-gradient(to right, blue ${
+              (currentDefender.points?.mp.current /
+                currentDefender.points?.mp.max) *
+              100
+            }%, white .1%)`,
+          }"
+        >
+          MP: {{ currentDefender.points?.mp.current }} /
+          {{ currentDefender.points?.mp.max }}
         </div>
-        <div>
-          AC: {{ currentDefender.ac }}
-        </div>
+        <div>AC: {{ currentDefender.ac }}</div>
       </div>
 
       <!-- <div>
@@ -959,17 +1059,16 @@ export default {
         </button>
       </div> -->
     </div>
-    
   </div>
 
-
-  <div @click="hideEndScreen()" v-if="showEndScreen" class="end-screen" :style="{'border-color': endResult == 'victory' ? 'turquoise' : 'gold'}">
-    <div v-if="endResult == 'victory'" class="victory">
-      Victory!
-    </div>
-    <div v-else-if="endResult == 'defeat'" class="defeat">
-      Defeat...
-    </div>
+  <div
+    @click="hideEndScreen()"
+    v-if="showEndScreen"
+    class="end-screen"
+    :style="{ 'border-color': endResult == 'victory' ? 'turquoise' : 'gold' }"
+  >
+    <div v-if="endResult == 'victory'" class="victory">Victory!</div>
+    <div v-else-if="endResult == 'defeat'" class="defeat">Defeat...</div>
   </div>
 </template>
 
@@ -983,7 +1082,7 @@ export default {
   /* transform: scaleX(2) scaleY(.5) rotate(45deg); */
 }
 .tilemap.isometric {
-  transform: scaleX(2) scaleY(.5) rotate(45deg);
+  transform: scaleX(2) scaleY(0.5) rotate(45deg);
 }
 .turn {
   border-width: 2px;
@@ -1023,21 +1122,37 @@ export default {
 }
 
 .attacker.player-view {
-  background:linear-gradient(to right, aquamarine 0%, rgba(255, 255, 255, 0) 90%);
+  background: linear-gradient(
+    to right,
+    aquamarine 0%,
+    rgba(255, 255, 255, 0) 90%
+  );
   color: black;
   padding-bottom: 20px;
 }
 .defender.player-view {
-  background:linear-gradient(to left, aquamarine 0%, rgba(255, 255, 255, 0) 90%);
+  background: linear-gradient(
+    to left,
+    aquamarine 0%,
+    rgba(255, 255, 255, 0) 90%
+  );
   color: black;
   padding-bottom: 20px;
 }
 .defender.enemy-view {
-  background:linear-gradient(to left, orangered 0%, rgba(255, 255, 255, 0) 90%);
+  background: linear-gradient(
+    to left,
+    orangered 0%,
+    rgba(255, 255, 255, 0) 90%
+  );
   /* color: black; */
 }
 .attacker.enemy-view {
-  background:linear-gradient(to right, orangered 0%, rgba(255, 255, 255, 0) 90%);
+  background: linear-gradient(
+    to right,
+    orangered 0%,
+    rgba(255, 255, 255, 0) 90%
+  );
   /* color: black; */
 }
 
@@ -1059,7 +1174,6 @@ export default {
   transform: translateX(0px);
 }
 
-
 .defender-info-container,
 .attacker-info-container {
   padding: 0px 100px;
@@ -1075,29 +1189,29 @@ export default {
   left: 0px;
   right: 0px;
 }
-.attack-view-container>div {
+.attack-view-container > div {
   flex-grow: 1;
   width: 50%;
 }
 .attack-view-sprite-container {
-    transform: scale(500%);
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-    margin-left: 50px;
-    pointer-events: none;
-    width: 25px;
-    height: 25px;      
+  transform: scale(500%);
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  margin-left: 50px;
+  pointer-events: none;
+  width: 25px;
+  height: 25px;
 }
 .defend-view-sprite-container {
-    transform: scale(500%);
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-    margin-right: 50px;
-    pointer-events: none;
-    width: 25px;
-    height: 25px;      
+  transform: scale(500%);
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  margin-right: 50px;
+  pointer-events: none;
+  width: 25px;
+  height: 25px;
 }
 .defend-view-upper {
   display: flex;
@@ -1188,7 +1302,7 @@ button {
   top: 30px;
 }
 
-@media(max-width: 400px){
+@media (max-width: 400px) {
   .defend-view-sprite-container {
     transform: scale(400%);
     margin-top: 25px;

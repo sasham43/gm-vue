@@ -11,7 +11,7 @@ export default {
     highlightedMoveTiles: Array,
     viewMode: String,
   },
-  emits:['tileSelect'],
+  emits: ["tileSelect"],
   computed: {
     playerX() {
       return this.player.x;
