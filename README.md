@@ -1,7 +1,7 @@
-# Vue 3 + Vite
+# Fogborn Tactics
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This repo is an experiment in creating a Tactics RPG game engine in Vue. It features a player character, multiple enemies, isometric & top down viewing modes, simulated terrain, basic enemy AI, melee & ranged attacks, and even magical powers (taken from Brandon Sanderson's Mistborn series). This style of game was one of my favorites while I was growing up, and it was a real joy to recreate it using technologies I'm familiar with.
 
-## Recommended IDE Setup
+## Getting Started
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+To run: `npm install && npm run dev`
